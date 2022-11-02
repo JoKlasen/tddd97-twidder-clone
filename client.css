@@ -1,0 +1,38 @@
+/* all h1 elements */
+h1{
+    color: red;
+    font-size: 85px;
+}
+/* class */
+.socialize{
+    font-weight: bold;
+}
+.flex-container{
+    display: flex;
+    background-color:rgb(243, 234, 222)
+}
+/* id */
+#example{
+    color : aqua;
+}
+#signIn{
+    border-color: red;
+    border-style: dashed;
+    height: auto;
+    /* width: auto; */
+    /* float:left; */
+}
+#signUp{
+    border-color: purple;
+    border-style: dashed;
+    flex-direction: column;
+    /* height: auto; */
+    /* width: auto; */
+}
+#welcome{
+    border-color: blue;
+    border-style: dashed;
+    /* height: auto; */
+    /* width: 400px; */
+    /* float:inline-start; */
+}
