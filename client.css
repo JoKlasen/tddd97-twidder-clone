@@ -3,6 +3,28 @@ h1{
     color: red;
     font-size: 85px;
 }
+/* label{
+    font-size: small;
+}
+input{
+    padding-right: 30px;
+} */
+label {
+    font-size: small;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: left;
+    width: 500px;
+    line-height: 26px;
+    margin-bottom: 10px;
+  }
+  
+  input {
+    height: 20px;
+    flex: 0 0 200px;
+    margin-left: 10px;
+  }
 /* class */
 .socialize{
     font-weight: bold;
@@ -15,24 +37,26 @@ h1{
 #example{
     color : aqua;
 }
+#log-in{
+    flex-direction: column;
+    height: 400px;
+    width : 250px;
+}
 #signIn{
     border-color: red;
     border-style: dashed;
     height: auto;
-    /* width: auto; */
-    /* float:left; */
+    width: auto;
 }
 #signUp{
     border-color: purple;
     border-style: dashed;
-    flex-direction: column;
-    /* height: auto; */
-    /* width: auto; */
+    height: auto;
+    width: auto;
 }
 #welcome{
     border-color: blue;
     border-style: dashed;
-    /* height: auto; */
-    /* width: 400px; */
-    /* float:inline-start; */
+    height: 400px;
+    width: 340px;
 }
