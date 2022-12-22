@@ -6,17 +6,18 @@
         <script src="serverstub.js" type="text/javascript"></script>
     </head>
     <body>
-        <!-- Wrapper div -->
-        <div class="flex-container"> 
-            <!-- Welcome message -->
+        <!-- Welcome page -->
+        <div id="not-logged-in-wrapper" class="flex-container">
             <div id="welcome">
                 <h1>Twidder</h1>
                 <p class="socialize"> A unique way of communicating over the internet!</p>
             </div>
 
+            <button onclick="logIn()">click me!</button>
+
             <!-- Sign in & sign up -->
             <div id="log-in" class="flex-container">
-                <div id="signIn">
+                <div id="sign-in">
                     <form action="">
                         <label for="email"> Email </label>
                         <input type="text" id="email" size="12">      
@@ -28,7 +29,7 @@
                     </form>
                 </div>
                 
-                <div id="signUp"> 
+                <div id="sign-up"> 
                     <form action="">
                         <label for="first-name"> First name </label>
                         <input type="text" id="first-name" size="12">
@@ -64,7 +65,15 @@
                     </form>    
                 </div>
             </div>
+        </div>
+        <!-- /Welcome page -->
 
-        </div> 
+
+        <!-- User is logged in page -->
+        <div id="logged-in-wrapper" style="display : none;">
+            <button onclick="logOut()">no click me!</button>
+
+        </div>
+        <!-- /User is logged in page -->
     </body>
 </html>
