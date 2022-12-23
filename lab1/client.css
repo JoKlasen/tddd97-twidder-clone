@@ -7,16 +7,16 @@ h1{
 .label {
     float : left;
     font-weight: bold;
+    font-size: 1.9vh;
 }
 .input {
     width : 125px;
     float : right;
-    border-width: 0.8vh;
+    border-width: 0.4vh;
 }
 .label-input-pair{
-    /* border-color: blue;
-    border-style: groove; */
-    margin-bottom: 0.5vh;
+    align-items: baseline;
+    margin-bottom: 1.0vh;
 }
 .socialize{
     font-weight: bold;

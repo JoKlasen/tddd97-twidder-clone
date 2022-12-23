@@ -12,9 +12,21 @@ function putElementsInCenter(){
     wrapperDiv.style.marginLeft = offset;
 }
 
-// function adjustLabelInputPair(){
+function putDotsBetweenLabelInputPair(){
+    let wrapperDivs = document.getElementsByClassName("label-input-pair");
+    
+    for (let i = 0; i < wrapperDivs.length; i++){
+        let children = wrapperDivs[i].children;
+        let labelField = children[0];
+        let inputField = children[1];
 
-// }
+        let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
+        let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
+        let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
+
+        labelField.innerHTML += '.'.repeat(dotsBetween);
+    }
+}
 
 
 function logIn(){
@@ -30,5 +42,6 @@ function logOut(){
 window.onload = function(){
     console.log("page has been loaded");
     displayNotLoggedin();
+    putDotsBetweenLabelInputPair();
 }
 
