@@ -6,74 +6,75 @@
         <script src="serverstub.js" type="text/javascript"></script>
     </head>
     <body>
-        <!-- Welcome page -->
-        <div id="not-logged-in-wrapper" class="flex-container">
-            <div id="welcome">
-                <h1>Twidder</h1>
-                <p class="socialize"> A unique way of communicating over the internet!</p>
-            </div>
-
-            <button onclick="logIn()">click me!</button>
-
-            <!-- Sign in & sign up -->
-            <div id="log-in" class="flex-container">
-                <div id="sign-in">
-                    <form action="">
-                        <label for="email"> Email </label>
-                        <input type="text" id="email" size="12">      
-                        <br>
-                        <label for="password"> Password </label>
-                        <input type="text" id="password" size="12">
-                        <br><br>
-                        <input type="submit" value="Submit">
-                    </form>
+        <div id="wrapper-center-align">
+            <!-- Welcome view -->
+            <div id="welcome-view" class="flex-container">
+                <div id="welcome">
+                    <h1>Twidder</h1>
+                    <p class="socialize"> A unique way of communicating over the internet!</p>
                 </div>
-                
-                <div id="sign-up"> 
-                    <form action="">
-                        <label for="first-name"> First name </label>
-                        <input type="text" id="first-name" size="12">
-                        <br>
 
-                        <label for="last-name">Last name</label>
-                        <input type="text" id="last-name" size="12">
-                        <br>
+                <button onclick="logIn()">click me!</button>
 
-                        <!-- <label for=""></label>
-                        <input type="text" id="">
-                        <br> -->
+                <!-- Sign in & sign up -->
+                <div id="log-in" class="flex-container">
+                    <div id="sign-in">
+                        <form action="">
+                            <label for="email"> Email </label>
+                            <input type="text" id="email" size="12">      
+                            <br>
+                            <label for="password"> Password </label>
+                            <input type="text" id="password" size="12">
+                            <br><br>
+                            <input type="submit" value="Login">
+                        </form>
+                    </div>
+                    
+                    <div id="sign-up"> 
+                        <form action="">
+                            <label for="first-name"> First name </label>
+                            <input type="text" id="first-name" size="12">
+                            <br>
 
-                        <label for="city"> City </label>
-                        <input type="text" id="city" size="12">
-                        <br>
+                            <label for="last-name">Last name</label>
+                            <input type="text" id="last-name" size="12">
+                            <br>
 
-                        <label for="country"> Country </label>
-                        <input type="text" id="country" size="12">
-                        <br>
+                            <!-- <label for=""></label>
+                            <input type="text" id="">
+                            <br> -->
 
-                        <label for="email"> Email </label>
-                        <input type="text" id="email" size="12">
-                        <br>
+                            <label for="city"> City </label>
+                            <input type="text" id="city" size="12">
+                            <br>
 
-                        <label for="password"> Password </label>
-                        <input type="text" id="password" size="12">
-                        <br>
+                            <label for="country"> Country </label>
+                            <input type="text" id="country" size="12">
+                            <br>
 
-                        <label for="repeat-password"> Repeat PSW </label>
-                        <input type="text" id="repeat-password" size="12">
-                        <br>
-                    </form>    
+                            <label for="email"> Email </label>
+                            <input type="text" id="email" size="12">
+                            <br>
+
+                            <label for="password"> Password </label>
+                            <input type="text" id="password" size="12">
+                            <br>
+
+                            <label for="repeat-password"> Repeat PSW </label>
+                            <input type="text" id="repeat-password" size="12">
+                            <br>
+                        </form>    
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- /Welcome page -->
+            <!-- /Welcome view -->
+        </div> 
 
-
-        <!-- User is logged in page -->
-        <div id="logged-in-wrapper" style="display : none;">
+        <!-- Profile view -->
+        <div id="profile-view" style="display : none;">
             <button onclick="logOut()">no click me!</button>
 
         </div>
-        <!-- /User is logged in page -->
+        <!-- /Profile view -->
     </body>
 </html>

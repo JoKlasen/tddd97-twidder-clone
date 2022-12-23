@@ -18,12 +18,12 @@ label {
     line-height: 26px;
     margin-bottom: 10px;
   }
-  
-  input {
-    height: 20px;
-    flex: 0 0 200px;
-    margin-left: 10px;
-  }
+
+input {
+height: 20px;
+flex: 0 0 200px;
+margin-left: 10px;
+}
 /* classes */
 .socialize{
     font-weight: bold;
@@ -34,9 +34,6 @@ label {
 }
 
 /* id's */
-#example{
-    color : aqua;
-}
 #log-in{
     flex-direction: column;
     height: 400px;
@@ -54,9 +51,13 @@ label {
     height: auto;
     width: auto;
 }
-#welcome{
+#welcome-view{
     border-color: blue;
     border-style: dashed;
     height: 400px;
     width: 340px;
+    margin-top : 100px;
+}
+#wrapper-center-align{
+    align-items: center;
 }

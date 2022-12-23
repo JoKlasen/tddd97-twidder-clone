@@ -6,13 +6,13 @@ let displayLoggedin = function() {
 }
 
 function logIn(){
-    document.getElementById("not-logged-in-wrapper").style.display = "none";
-    document.getElementById("logged-in-wrapper").style.display = "flex";
+    document.getElementById("welcome-view").style.display = "none";
+    document.getElementById("profile-view").style.display = "flex";
 }
 
 function logOut(){
-    document.getElementById("logged-in-wrapper").style.display = "none";
-    document.getElementById("not-logged-in-wrapper").style.display = "flex";
+    document.getElementById("profile-view").style.display = "none";
+    document.getElementById("welcome-view").style.display = "flex";
 }
 
 window.onload = function(){
