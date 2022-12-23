@@ -1,41 +1,43 @@
 h1{
     color: red;
-    font-size: 85px;
+    font-size: 40px;
 }
-/* label{
-    font-size: small;
-}
-input{
-    padding-right: 30px;
-} */
-label {
-    font-size: small;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    text-align: left;
-    width: 500px;
-    line-height: 26px;
-    margin-bottom: 10px;
-  }
 
-input {
-height: 20px;
-flex: 0 0 200px;
-margin-left: 10px;
-}
 /* classes */
+.label {
+    float : left;
+    font-weight: bold;
+}
+.input {
+    width : 125px;
+    float : right;
+    border-width: 0.8vh;
+}
+.label-input-pair{
+    /* border-color: blue;
+    border-style: groove; */
+    margin-bottom: 0.5vh;
+}
 .socialize{
     font-weight: bold;
 }
 .flex-container{
     display: flex;
-    background-color:rgb(243, 234, 222)
+    background-color:rgba(222, 226, 243, 0.5);
+}
+.flex-row-container{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column-container{
+    display: flex;
+    flex-direction: column;
 }
 
 /* id's */
 #log-in{
-    flex-direction: column;
+    border-color: yellow;
+    border-style: groove;
     height: 400px;
     width : 250px;
 }
@@ -44,6 +46,7 @@ margin-left: 10px;
     border-style: dashed;
     height: auto;
     width: auto;
+    margin-bottom: 10px;
 }
 #sign-up{
     border-color: purple;
@@ -51,13 +54,16 @@ margin-left: 10px;
     height: auto;
     width: auto;
 }
-#welcome-view{
+#welcome-message{
     border-color: blue;
     border-style: dashed;
     height: 400px;
-    width: 340px;
-    margin-top : 100px;
+    width: 340px; 
+    margin-right: 10px;
 }
-#wrapper-center-align{
-    align-items: center;
+#welcome-view{
+    border-color : violet;
+    border-style: groove;
+    width: 600px;
+    margin-top: 100px;
 }

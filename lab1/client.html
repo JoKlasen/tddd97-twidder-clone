@@ -5,70 +5,98 @@
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
     </head>
-    <body>
-        <div id="wrapper-center-align">
-            <!-- Welcome view -->
-            <div id="welcome-view" class="flex-container">
-                <div id="welcome">
-                    <h1>Twidder</h1>
-                    <p class="socialize"> A unique way of communicating over the internet!</p>
+    <body style="background-image: url('pinto_ensvensktiger.JPEG');">
+        <!-- Welcome view -->
+        <div id="welcome-view" class="flex-container">
+            <div id="welcome-message">
+                <h1>Twidder</h1>
+                <p class="socialize"> A unique way of communicating over the internet!</p>
+            </div>
+
+            <!-- Sign in & sign up -->
+            <div id="log-in" class="flex-column-container">
+                
+                <!-- <div id="sign-in">
+                    <form action="">
+                        <div style="position: relative;">
+                            <div class="flex-row-container">
+                                <label for="email"> Email </label>
+                                <input type="text" id="email">      
+                            </div>
+
+                            <div class="flex-row-container">
+                                <label for="password"> Password </label>
+                                <input type="text" id="password">
+                            </div>
+                            <div>
+                                <input type="submit" value="Login">
+                            </div>
+                        </div>
+                    </form>
+                </div> -->
+
+                <div id="sign-in">
+                    <form action="" class="flex-column-container">
+                            <div class="label-input-pair" > 
+                                <label for="email" class="label"> Email </label>
+                                <input type="email" id="email" class="input">
+                            </div>  
+                            
+                            <br>
+
+                            <div class="label-input-pair"> 
+                                <label for="password" class="label"> Password </label>
+                                <input type="text" id="password" class="input">
+                            </div>  
+                            <br>
+                            <!-- <label for="password" class="label"> Password </label>
+                            <input type="text" id="password" class="input">
+                            <br> -->
+                            <input type="submit" value="Login">
+                    </form>
                 </div>
 
-                <button onclick="logIn()">click me!</button>
 
-                <!-- Sign in & sign up -->
-                <div id="log-in" class="flex-container">
-                    <div id="sign-in">
-                        <form action="">
-                            <label for="email"> Email </label>
-                            <input type="text" id="email" size="12">      
-                            <br>
-                            <label for="password"> Password </label>
-                            <input type="text" id="password" size="12">
-                            <br><br>
-                            <input type="submit" value="Login">
-                        </form>
-                    </div>
-                    
-                    <div id="sign-up"> 
-                        <form action="">
-                            <label for="first-name"> First name </label>
-                            <input type="text" id="first-name" size="12">
-                            <br>
 
-                            <label for="last-name">Last name</label>
-                            <input type="text" id="last-name" size="12">
-                            <br>
+                
+                <div id="sign-up"> 
+                    <form action="">
+                        <label for="first-name"> First name </label>
+                        <input type="text" id="first-name" size="12">
+                        <br>
 
-                            <!-- <label for=""></label>
-                            <input type="text" id="">
-                            <br> -->
+                        <label for="last-name">Last name</label>
+                        <input type="text" id="last-name" size="12">
+                        <br>
 
-                            <label for="city"> City </label>
-                            <input type="text" id="city" size="12">
-                            <br>
+                        <!-- <label for=""></label>
+                        <input type="text" id="">
+                        <br> -->
 
-                            <label for="country"> Country </label>
-                            <input type="text" id="country" size="12">
-                            <br>
+                        <label for="city"> City </label>
+                        <input type="text" id="city" size="12">
+                        <br>
 
-                            <label for="email"> Email </label>
-                            <input type="text" id="email" size="12">
-                            <br>
+                        <label for="country"> Country </label>
+                        <input type="text" id="country" size="12">
+                        <br>
 
-                            <label for="password"> Password </label>
-                            <input type="text" id="password" size="12">
-                            <br>
+                        <label for="email"> Email </label>
+                        <input type="text" id="email" size="12">
+                        <br>
 
-                            <label for="repeat-password"> Repeat PSW </label>
-                            <input type="text" id="repeat-password" size="12">
-                            <br>
-                        </form>    
-                    </div>
+                        <label for="password"> Password </label>
+                        <input type="text" id="password" size="12">
+                        <br>
+
+                        <label for="repeat-password"> Repeat PSW </label>
+                        <input type="text" id="repeat-password" size="12">
+                        <br>
+                    </form>    
                 </div>
             </div>
-            <!-- /Welcome view -->
-        </div> 
+        </div>
+        <!-- /Welcome view -->
 
         <!-- Profile view -->
         <div id="profile-view" style="display : none;">

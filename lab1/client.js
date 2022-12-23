@@ -1,9 +1,21 @@
 let displayNotLoggedin = function() {
-    //something
+    putElementsInCenter();
 }
 let displayLoggedin = function() {
     //something
 }
+
+function putElementsInCenter(){
+    let wrapperDiv = document.getElementById("welcome-view");
+    let center = window.innerWidth / 2;
+    let offset = center - (wrapperDiv.offsetWidth / 2);
+    wrapperDiv.style.marginLeft = offset;
+}
+
+// function adjustLabelInputPair(){
+
+// }
+
 
 function logIn(){
     document.getElementById("welcome-view").style.display = "none";
