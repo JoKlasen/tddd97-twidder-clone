@@ -1,14 +1,16 @@
 let displayNotLoggedin = function() {
-    putElementsInCenter();
+    let welcomeView = document.getElementById("welcomeview");
+    document.getElementById("welcome-section").innerHTML = welcomeView.innerHTML;
+    centerElementsInWindow();
 }
 let displayLoggedin = function() {
     //something
 }
 
-function putElementsInCenter(){
+function centerElementsInWindow(){
     let wrapperDiv = document.getElementById("welcome-view");
     let center = window.innerWidth / 2;
-    let offset = center - (wrapperDiv.offsetWidth / 2);
+    let offset = center - (wrapperDiv.offsetWidth / 2); 
     wrapperDiv.style.marginLeft = offset;
 }
 

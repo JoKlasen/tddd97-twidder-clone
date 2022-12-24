@@ -1,6 +1,12 @@
 h1{
     color: red;
     font-size: 40px;
+    text-align: center;
+}
+select{
+    width: 50%;
+    border-width: 0.4vh;
+    float: right;
 }
 
 /* classes */
@@ -10,7 +16,7 @@ h1{
     font-size: 1.9vh;
 }
 .input {
-    width : 125px;
+    width: 50%;
     float : right;
     border-width: 0.4vh;
 }
@@ -19,6 +25,7 @@ h1{
     margin-bottom: 1.0vh;
 }
 .socialize{
+    text-align: center;
     font-weight: bold;
 }
 .flex-container{
@@ -35,6 +42,11 @@ h1{
 }
 
 /* id's */
+#sign-up-message{
+    font-size: 90%;
+    margin-bottom: 4%;
+    margin-top: 4%;
+}
 #log-in{
     border-color: yellow;
     border-style: groove;
@@ -53,6 +65,7 @@ h1{
     border-style: dashed;
     height: auto;
     width: auto;
+    max-height: 350px;
 }
 #welcome-message{
     border-color: blue;
