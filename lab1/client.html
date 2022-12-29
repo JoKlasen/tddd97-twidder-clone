@@ -27,7 +27,7 @@
                                     <input type="text" id="password" class="input" required>
                                 </div>  
 
-                                <input type="submit" value="Login" style="border-width: 0.4vh;">
+                                <input type="submit" value="Login" class="login-submit">
                         </form>
                     </div>
                     
@@ -36,7 +36,7 @@
 
                         <p class="socialize" id="sign-up-message">Sign up here!</p>
 
-                        <form id="sign-up-form" action="" class="flex-column-container" onsubmit="validateSignUp()">
+                        <form id="sign-up-form" action="" class="flex-column-container" onsubmit="validateSignUp(event)">
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="first-name" class="label">First name</label>
@@ -83,7 +83,7 @@
                                 <input type="text" id="password-repeat" class="input" minlength="4" required>
                             </div>
 
-                            <input type="submit" value="Login" style="border-width: 0.4vh;">
+                            <input type="submit" value="Login" class="login-submit">
                         </form>    
                     </div>
                 </div>
@@ -104,23 +104,24 @@
     </head>
     <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">
         
-        <button onclick="showModal('welcome-section')"> click me!</button>
+        <!-- <button onclick="showModal('welcome-section')"> click me!</button> -->
         <div id="welcome-section">
             
         </div>
         
         <div id="error-modal" class="modal flex-column-container">
             <div id="modal-header" class="flex-row-container">
-                <div id="modal-title"> Test text </div>
-                <button onclick="closeModal('welcome-section')"> X </button>
+                <div id="modal-title"></div>
+                <button onclick="closeModal('welcome-section')"
+                        style=" margin-right : 2.5%;
+                                margin-bottom: 1%;
+                                border: none;
+                                font-weight: bold;"> 
+                    X 
+                </button>
             </div>
             
-            
-            <div id="modal-body"> Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Architecto atque eligendi dolores asperiores?
-            Optio dolorum, fugiat, nesciunt autem nobis, facere rerum delectus
-            doloribus tenetur soluta dignissimos consectetur. Excepturi, ab
-            laboriosam! </div>
+            <div id="modal-body"></div>
 
         </div>
         
@@ -128,7 +129,7 @@
             
         </div>
         
-        
+        <form ></form>
 
 
         <!-- <div id="welcome-section" style="display : none">
