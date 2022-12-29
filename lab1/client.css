@@ -10,12 +10,34 @@ select{
 }
 
 /* classes */
+.modal{
+    border-style: groove;
+    border: 3px solid black;
+    border-color: rgba(0, 0, 0, 1);
+    background-color:rgb(236, 236, 236, 1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    position: fixed;
+    display: flex;
+    height: 60vh;
+    width: 60vw;
+    z-index: 10;
+}
+.overlay{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: rgba(0,0,0,0.95);
+    transform: scale(0);
+    z-index: 3;
+}
 .label {
     float : left;
     font-weight: bold;
     font-size: 1.9vh;
 }
-.input {
+.input{
     width: 50%;
     float : right;
     border-width: 0.4vh;
@@ -30,7 +52,8 @@ select{
 }
 .flex-container{
     display: flex;
-    background-color:rgba(222, 226, 243, 0.5);
+    /* background-color:rgba(222, 226, 243); */
+    /* background-color:rgba(222, 226, 243, 0.5); */
 }
 .flex-row-container{
     display: flex;
@@ -42,6 +65,25 @@ select{
 }
 
 /* id's */
+#modal-header{
+    border-bottom: 0.5vh solid black;
+    font-size: 90%;
+    margin-bottom: 4%;
+    margin-top: 2%;
+    justify-content: space-between;
+    align-items: center;
+}
+#modal-title{
+    font-size: 90%;
+}
+#modal-body{
+
+}
+#welcome-section{
+    height: 100%;
+    width: 100%;
+    border: 3px solid black;
+}
 #sign-up-message{
     font-size: 90%;
     margin-bottom: 4%;
@@ -75,8 +117,11 @@ select{
     margin-right: 10px;
 }
 #welcome-view{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border-color : violet;
     border-style: groove;
     width: 600px;
-    margin-top: 100px;
 }
