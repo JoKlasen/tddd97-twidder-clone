@@ -16,7 +16,7 @@
                     
                     <!-- Sign in section -->
                     <div id="sign-in">
-                        <form id="sign-in-form" action="" class="flex-column-container">
+                        <form id="sign-in-form" action="" class="flex-column-container" onsubmit="validateSignIn(event)">
                                 <div class="label-input-pair flex-row-container"> 
                                     <label for="email" class="label">Email</label>
                                     <input type="email" id="email" class="input" required>
@@ -24,7 +24,7 @@
 
                                 <div class="label-input-pair flex-row-container"> 
                                     <label for="password" class="label">Password</label>
-                                    <input type="text" id="password" class="input" required>
+                                    <input type="password" id="password" class="input" required>
                                 </div>  
 
                                 <input type="submit" value="Login" class="login-submit">
@@ -75,12 +75,12 @@
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="password-new" class="label">Password</label>
-                                <input type="text" id="password-new" class="input" minlength="4" required>
+                                <input type="password" id="password-new" class="input" minlength="4" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="password-repeat" class="label">Repeat PSW</label>
-                                <input type="text" id="password-repeat" class="input" minlength="4" required>
+                                <input type="password" id="password-repeat" class="input" minlength="4" required>
                             </div>
 
                             <input type="submit" value="Login" class="login-submit">
@@ -104,7 +104,6 @@
     </head>
     <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">
         
-        <!-- <button onclick="showModal('welcome-section')"> click me!</button> -->
         <div id="welcome-section">
             
         </div>

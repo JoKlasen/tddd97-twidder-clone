@@ -4,7 +4,31 @@ let displayNotLoggedin = function() {
     welcomeSection.innerHTML = welcomeView.innerHTML;
 }
 let displayLoggedin = function() {
-    //something
+    console.log('Display logged in!');
+}
+
+function validateSignIn(event){
+
+    let emailInput = document.getElementById("email");
+    let passwordInput = document.getElementById("password");
+
+    let response = serverstub.signIn(emailInput.value, passwordInput.value); 
+
+    if (!response.success){
+        let modalTitle = 'Sign in status: fail';
+        let modalBody = [response.message];
+        showModal('welcome-section', modalBody, modalTitle);        
+        event.preventDefault();
+        return false;
+    }
+
+    // Might be redundant
+    window.localStorage.setItem('sign-in-status', 'success');
+    window.localStorage.setItem('sign-in-message', response.message);
+    
+    console.log("Response: ");
+    console.log(response);
+    
 }
 
 function validateSignUp(event){
@@ -22,7 +46,7 @@ function validateSignUp(event){
         return false;
     }
     
-    if (password != passwordRepeat){
+    if (password.value != passwordRepeat.value){
         let modalBody = [
                             "The passwords are not equal to each other.",
                         ]
@@ -30,6 +54,27 @@ function validateSignUp(event){
         event.preventDefault();
         return false;
     }
+
+    let formData =  {
+                        email : document.getElementById("email-new").value,
+                        password : document.getElementById("password-new").value,
+                        firstname : document.getElementById("first-name").value,
+                        familyname : document.getElementById("last-name").value,
+                        gender : document.getElementById("gender-input").value,
+                        city :  document.getElementById("city").value,
+                        country: document.getElementById("country").value,
+                    }
+    
+    let response = serverstub.signUp(formData);
+    if (response.success){
+        window.localStorage.setItem('sign-up-status', 'success');
+    } else{
+        window.localStorage.setItem('sign-up-status', 'fail');
+    }
+    
+    window.localStorage.setItem('sign-up-message', response.message);
+    console.log(response);
+
     return true;
 }
 
@@ -63,24 +108,85 @@ function showModal(section, modalBody, modalTitle){
     
     let currentModalBody = document.getElementById("modal-body");
     let currentModalTitle = document.getElementById("modal-title");
+    currentModalBody.innerHTML = '';
+    currentModalTitle.innerHTML = '';
+    
     modalBody.forEach(element => {
-        currentModalBody.innerHTML += element;
+        currentModalBody.innerHTML += element + "<br>";
     });
     currentModalTitle.innerHTML += modalTitle;
 
-
     currentSection.style.pointerEvents = "none";
-    modal.style.transform += "translate(-50%, -50%) scale(1.0)";
+    modal.style.transform = "translate(-50%, -50%) scale(1.0)";
 }
 
 function closeModal(section){
     let modal = document.getElementById("error-modal");
     let currentSection = document.getElementById(section);
     currentSection.style.pointerEvents = "auto";
-    modal.style.transform += "scale(0)";
-    location.reload();
+    modal.style.transform = "translate(-50%, -50%) scale(0)";
 }
 
+
+function checkSignUpStatus(){
+    
+    if (window.localStorage.getItem('sign-up-status') === null)
+    {
+        console.log("No sign up was done previous this refresh");
+        return;
+    }
+    
+    let modalTitle = 'Sign up status: ' + window.localStorage.getItem('sign-up-status');
+    let modalBody = [
+                        window.localStorage.getItem('sign-up-message')
+                    ]
+                    
+    showModal(  'welcome-section',  
+                modalBody,
+                modalTitle
+             )
+
+    window.localStorage.removeItem('sign-up-status');
+    window.localStorage.removeItem('sign-up-message'); 
+}
+
+function closeWelcomeSection(){
+    // Do something
+}
+        
+function checkSignInStatus(){
+    if (window.localStorage.getItem('sign-in-status') === null)
+    {
+        console.log("No sign in was done previous this refresh");
+        return;
+    }
+
+    let status = window.localStorage.getItem('sign-in-status');
+    if (status === 'success'){
+        closeWelcomeSection();
+        displayLoggedin();
+    } else {
+        let modalTitle = 'Sign in status: ' + status;
+        let modalBody = [
+                            window.localStorage.getItem('sign-in-message')
+                        ]
+    
+        showModal(  'welcome-section',  
+                    modalBody,
+                    modalTitle
+                 )
+    }
+    
+    window.localStorage.removeItem('sign-in-status');
+    window.localStorage.removeItem('sign-in-message'); 
+}
+
+function handlePreviousSession(){
+    checkSignUpStatus();
+    checkSignInStatus();
+}
+                
+                
 function logIn(){
     document.getElementById("welcome-view").style.display = "none";
     document.getElementById("profile-view").style.display = "flex";
@@ -90,10 +196,11 @@ function logOut(){
     document.getElementById("profile-view").style.display = "none";
     document.getElementById("welcome-view").style.display = "flex";
 }
-
+                
 window.onload = function(){
     console.log("page has been loaded");
     displayNotLoggedin();
     putDotsBetweenLabelInputPair();
+    handlePreviousSession();
 }
 
