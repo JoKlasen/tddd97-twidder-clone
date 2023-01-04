@@ -1,10 +1,36 @@
-let displayNotLoggedin = function() {
-    let welcomeView = document.getElementById("welcome-view-container");
+function closeWelcomeSection(){
     let welcomeSection = document.getElementById("welcome-section");
-    welcomeSection.innerHTML = welcomeView.innerHTML;
+    welcomeSection.innerHTML = '';
 }
+
+function putDotsBetweenLabelInputPair(){
+    let wrapperDivs = document.getElementsByClassName("label-input-pair");
+    
+    for (let i = 0; i < wrapperDivs.length; i++){
+        let children = wrapperDivs[i].children;
+        let labelField = children[0];
+        let inputField = children[1];
+
+        let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
+        let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
+        let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
+
+        labelField.innerHTML += '.'.repeat(dotsBetween);
+    }
+}
+
+let displayNotLoggedin = function() {
+    let container = document.getElementById("welcome-view-container");
+    let welcomeSection = document.getElementById("welcome-section");
+    welcomeSection.innerHTML = container.innerHTML;
+    putDotsBetweenLabelInputPair();
+}
+
 let displayLoggedin = function() {
     console.log('Display logged in!');
+    let container = document.getElementById('profile-view-container');
+    let profileSection = document.getElementById('profile-section');
+    profileSection.innerHTML = container.innerHTML;
 }
 
 function validateSignIn(event){
@@ -25,10 +51,7 @@ function validateSignIn(event){
     // Might be redundant
     window.localStorage.setItem('sign-in-status', 'success');
     window.localStorage.setItem('sign-in-message', response.message);
-    
-    console.log("Response: ");
-    console.log(response);
-    
+    document.cookie
 }
 
 function validateSignUp(event){
@@ -85,22 +108,6 @@ function centerElementsInWindow(currentView){
     wrapperDiv.style.marginLeft = offset;
 }
 
-function putDotsBetweenLabelInputPair(){
-    let wrapperDivs = document.getElementsByClassName("label-input-pair");
-    
-    for (let i = 0; i < wrapperDivs.length; i++){
-        let children = wrapperDivs[i].children;
-        let labelField = children[0];
-        let inputField = children[1];
-
-        let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
-        let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
-        let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
-
-        labelField.innerHTML += '.'.repeat(dotsBetween);
-    }
-}
-
 function showModal(section, modalBody, modalTitle){
     console.log("inside Showmodal");
     let modal = document.getElementById("error-modal");
@@ -149,11 +156,12 @@ function checkSignUpStatus(){
     window.localStorage.removeItem('sign-up-status');
     window.localStorage.removeItem('sign-up-message'); 
 }
-
-function closeWelcomeSection(){
-    // Do something
-}
         
+// function activeToken(){
+//     window.localStorage.setItem('alreadyActive', 'true');
+//     document.cookie = '';
+// }
+
 function checkSignInStatus(){
     if (window.localStorage.getItem('sign-in-status') === null)
     {
@@ -163,6 +171,7 @@ function checkSignInStatus(){
 
     let status = window.localStorage.getItem('sign-in-status');
     if (status === 'success'){
+        // activeToken();
         closeWelcomeSection();
         displayLoggedin();
     } else {
@@ -185,22 +194,15 @@ function handlePreviousSession(){
     checkSignUpStatus();
     checkSignInStatus();
 }
-                
-                
-function logIn(){
-    document.getElementById("welcome-view").style.display = "none";
-    document.getElementById("profile-view").style.display = "flex";
+   
+function displayView(){
+    let isLoggedIn = window.localStorage.getItem('session-status');
+    displayNotLoggedin();
 }
 
-function logOut(){
-    document.getElementById("profile-view").style.display = "none";
-    document.getElementById("welcome-view").style.display = "flex";
-}
-                
 window.onload = function(){
     console.log("page has been loaded");
-    displayNotLoggedin();
-    putDotsBetweenLabelInputPair();
+    displayView();
     handlePreviousSession();
 }
 

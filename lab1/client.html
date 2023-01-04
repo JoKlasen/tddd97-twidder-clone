@@ -92,9 +92,9 @@
         <!-- /Welcome view -->
         
         <!-- Profile view -->
-        <script type="text/view" id="profileview">
+        <script type="text/view" id="profile-view-container">
             <div id="profile-view">
-                <button onclick="logOut()">no click me!</button>
+                <button>click me!</button>
             </div>
         </script>
         <!-- /Profile view -->
@@ -104,10 +104,17 @@
     </head>
     <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">
         
+        <!-- Not logged in -->
         <div id="welcome-section">
             
         </div>
         
+        <!-- Logged in -->
+        <div id="profile-section">
+            
+        </div>
+                
+        <!-- Error popup -->
         <div id="error-modal" class="modal flex-column-container">
             <div id="modal-header" class="flex-row-container">
                 <div id="modal-title"></div>
@@ -121,25 +128,7 @@
             </div>
             
             <div id="modal-body"></div>
-
         </div>
-        
-        <div id="profile-section">
-            
-        </div>
-        
-        <form ></form>
-
-
-        <!-- <div id="welcome-section" style="display : none">
-
-        </div>
-         -->
-        <!-- <div id="error-overlay" class="overlay"></div> -->
-<!--         
-        <div id="sign-up-error-modal">
-
-        </div> -->
 
     </body>
 </html>
