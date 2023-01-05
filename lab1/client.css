@@ -5,7 +5,7 @@ h1{
 }
 select{
     width: 50%;
-    border-width: 0.4vh;
+    border-width: 2px;
     float: right;
 }
 /* classes */
@@ -19,30 +19,21 @@ select{
     transform: translate(-50%, -50%) scale(0);
     position: fixed;
     display: flex;
-    height: 50vh;
-    width: 400px;
+    height: 350px;
+    width: 350px;
     z-index: 10;
-}
-.overlay{
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    background-color: rgba(0,0,0,0.95);
-    transform: scale(0);
-    z-index: 3;
 }
 .label {
     float : left;
-    font-weight: bold;
-    font-size: 1em;
+    font-size:medium;
 }
 .input{
     width: 50%;
-    border-width: 0.4vh;
+    border-width: 2px;
 }
 .label-input-pair{
-    margin-bottom: 0.5vh;
-    margin-top: 0.5vh;
+    margin-bottom: 3px;
+    margin-top: 2px;
     margin-left: 2%;
     margin-right: 2%;
     justify-content: space-between;
@@ -64,14 +55,15 @@ select{
     flex-direction: column;
 }
 .login-submit{
-    border-width: 0.4vh;
+    border-width: 3px;
+    margin-top: 1px;
     margin-left: 1%;
     margin-right: 1%;
 }
 
 /* id's */
 #modal-header{
-    border-bottom: 0.4vh solid black;
+    border-bottom: 3px solid black;
     font-size: 90%;
     margin-bottom: 4%;
     margin-top: 2%;
@@ -94,23 +86,24 @@ select{
     max-width: 600px;
 }
 #welcome-message{
-    border: 0.35vh solid black;
+    border: 2.5px solid black;
     background-color:rgb(248, 239, 210);
     max-height: 410px;
     max-width: 340px;
     margin-right: 10px;
 }
 #sign-up-message{
-    font-size: 90%;
-    margin-bottom: 4%;
-    margin-top: 4%;
+    font-size: medium;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 #log-in{
     max-height: 410px;
     max-width : 250px;
 }
 #sign-in{
-    border: 0.35vh solid black;
+    border: 2.5px solid black;
     background-color:rgb(248, 239, 210);
     height: auto;
     width: auto;
@@ -118,7 +111,7 @@ select{
 }
 #sign-up{
     background-color:rgb(248, 239, 210);
-    border: 0.35vh solid black;
+    border: 2.5px solid black;
     height: auto;
     width: auto;
     max-height: 350px;
