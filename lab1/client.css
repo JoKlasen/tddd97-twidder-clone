@@ -34,7 +34,7 @@ select{
 .label {
     float : left;
     font-weight: bold;
-    font-size: 1.9vh;
+    font-size: 1em;
 }
 .input{
     width: 50%;
