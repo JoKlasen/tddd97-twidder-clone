@@ -1,3 +1,4 @@
+// Date might need to change 
 function setCookie(token){
     let currentDate = new Date();
     document.cookie = 'logged_in_user=' + token + '; expires=' + currentDate.toString + '; path=/';
@@ -6,24 +7,24 @@ function setCookie(token){
 // Returns empty string if cookieName didn't match any saved cookie
 function getCookie(cookieName){
     let cookies = document.cookie.split(';');
-    console.log('Cookies: ');
-    console.log(cookies);
-
     let data = '';
     
     for (let i = 0; i < cookies.length; i++){
         if (cookies[i].includes(cookieName)){
             let equalSign = cookies[i].indexOf('=');
-            data = cookies[i].substring(equalSign, cookies[i].length - 1);
+            data = cookies[i].substring(equalSign + 1);
             console.log('token: ');
             console.log(data);
             break;
         }
     }
+    return data;
 }
 
-function activeUser(){
-    return serverstub.getUserDataByToken(getCookie('logged_in_user')) !== null;
+function getActiveUser(){
+    let token = getCookie('logged_in_user');
+    let userData = serverstub.getUserDataByToken(token);
+    return userData;
 }
 
 function putDotsBetweenLabelInputPair(){
@@ -42,17 +43,28 @@ function putDotsBetweenLabelInputPair(){
     }
 }
 
+function hideOtherView(viewName){
+    let otherView = document.getElementById(viewName);
+    otherView.style.display = 'none';
+}
+
 let displayNotLoggedin = function() {
+    hideOtherView('profile-section');
+
     let container = document.getElementById("welcome-view-container");
     let welcomeSection = document.getElementById("welcome-section");
+    welcomeSection.style.display = 'block';
+
     welcomeSection.innerHTML = container.innerHTML;
     putDotsBetweenLabelInputPair();
 }
 
 let displayLoggedin = function() {
-    console.log('Display logged in!');
+    hideOtherView('welcome-section');
+
     let container = document.getElementById('profile-view-container');
     let profileSection = document.getElementById('profile-section');
+    profileSection.display = 'block';
     profileSection.innerHTML = container.innerHTML;
 }
 
@@ -155,7 +167,7 @@ function checkSignUpStatus(){
     
     if (window.localStorage.getItem('sign-up-status') === null)
     {
-        console.log("No sign up was done previous this refresh");
+        // No sign up was done previous this refresh
         return;
     }
     
@@ -171,19 +183,17 @@ function checkSignUpStatus(){
                 
     window.localStorage.removeItem('sign-up-status');
     window.localStorage.removeItem('sign-up-message'); 
-    
-    return;
 }
 
 function displayView(){
-    // Might need information about who is logged in. Future problem
-    let loggedIn = activeUser(); 
+    let userData = getActiveUser();
+    let loggedIn = userData.success; 
 
-    //if (loggedIn){
-    //    displayLoggedin();
-    //} else{
+    if (loggedIn){
+        displayLoggedin();
+    } else{
         displayNotLoggedin();
-    //}
+    }
 }
 
 window.onload = function(){
@@ -191,41 +201,3 @@ window.onload = function(){
     displayView();
     checkSignUpStatus();
 }
-
-
-
-
-
-
-
-
-// function checkSignInStatus(){
-//     if (window.localStorage.getItem('sign-in-status') === null)
-//     {
-//         console.log("No sign in was done previous this refresh");
-//         // throw new Error('No sign in was done previous this refresh');
-//         return;
-//     }
-    
-//     let status = window.localStorage.getItem('sign-in-status');
-//     if (status === 'success'){
-//         // activeToken();
-//         closeWelcomeSection();
-//         displayLoggedin();
-//     } else {
-//         let modalTitle = 'Sign in status: ' + status;
-//         let modalBody = [
-//             window.localStorage.getItem('sign-in-message')
-//         ]
-        
-//         showModal(  'welcome-section',  
-//         modalBody,
-//         modalTitle
-//         )
-//     }
-    
-//     window.localStorage.removeItem('sign-in-status');
-//     window.localStorage.removeItem('sign-in-message'); 
-    
-//     return true;
-// }

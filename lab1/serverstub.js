@@ -24,7 +24,6 @@ var serverstub = (function() {
 	} else {
 	    loggedInUsers = JSON.parse(localStorage.getItem("loggedinusers"));
       }
-
   }
   
   var persistUsers = function(){
