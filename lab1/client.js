@@ -7,7 +7,7 @@ function toTab(toTabName){
     colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
     CURRENT_PROFILE_TAB = toTabName;
 
-    let newTabElement =document.getElementById(toTabName);
+    let newTabElement = document.getElementById(toTabName);
     newTabElement.style.display = 'block';   
 }
 
@@ -20,19 +20,70 @@ function colorAnchor(anchorID, color){
 function toHome(event){
     toTab('home');
     colorAnchor('homeAnchor', 'purple');
+    putDotsBetweenLabelInputPair();
     event.preventDefault();
 }
 function toBrowse(event){
     toTab('browse');
     colorAnchor('browseAnchor', 'purple');
+    putDotsBetweenLabelInputPair();
     event.preventDefault();
 }
 function toAccount(event){
     toTab('account');
     colorAnchor('accountAnchor', 'purple');
+    putDotsBetweenLabelInputPair();
     event.preventDefault();
 }
-// /Profile scripts
+function validatePasswordChange(event){
+    let oldPassword = document.getElementById('password-old').value;
+    let newPassword = document.getElementById('password-new').value;
+    let newPasswordAgain = document.getElementById('password-new-again').value;
+
+    let modalBody = [];
+    let modalTitle = 'Error chaning password';
+
+    if (newPassword !== newPasswordAgain){
+        modalBody = ['New passwords doesn\'t match!'];
+        showModal('profile-section', modalBody, modalTitle);
+        event.preventDefault()
+        return; 
+    }
+
+    console.log(oldPassword);
+    console.log(newPassword);
+    console.log(newPasswordAgain);
+    event.preventDefault()
+}
+
+// /Profile function
+
+function showModal(section, modalBody, modalTitle){
+    
+    let modal = document.getElementById("error-modal");
+    let currentSection = document.getElementById(section);
+    
+    
+    let currentModalBody = document.getElementById("modal-body");
+    let currentModalTitle = document.getElementById("modal-title");
+    currentModalBody.innerHTML = '';
+    currentModalTitle.innerHTML = '';
+    
+    modalBody.forEach(element => {
+        currentModalBody.innerHTML += element + "<br>";
+    });
+    currentModalTitle.innerHTML += modalTitle;
+    
+    currentSection.style.pointerEvents = "none";
+    modal.style.transform = "translate(-50%, -50%) scale(1.0)";
+
+    document.getElementById('modal-close-button').addEventListener('click', function(){
+        let modal = document.getElementById("error-modal");
+        let currentSection = document.getElementById(section);
+        currentSection.style.pointerEvents = "auto";
+        modal.style.transform = "translate(-50%, -50%) scale(0)";        
+    });
+}
 
 
 // Date might need to change 
@@ -118,6 +169,7 @@ let displayLoggedin = function() {
 
     profileSection.style.display = 'block';
     profileSection.innerHTML = container.innerHTML;
+    putDotsBetweenLabelInputPair();
 }
 
 function validateSignIn(event){
@@ -187,32 +239,6 @@ function validateSignUp(event){
     console.log(response);
 
     return true;
-}
-
-function showModal(section, modalBody, modalTitle){
-    console.log("inside Showmodal");
-    let modal = document.getElementById("error-modal");
-    let currentSection = document.getElementById(section);
-    
-    let currentModalBody = document.getElementById("modal-body");
-    let currentModalTitle = document.getElementById("modal-title");
-    currentModalBody.innerHTML = '';
-    currentModalTitle.innerHTML = '';
-    
-    modalBody.forEach(element => {
-        currentModalBody.innerHTML += element + "<br>";
-    });
-    currentModalTitle.innerHTML += modalTitle;
-
-    currentSection.style.pointerEvents = "none";
-    modal.style.transform = "translate(-50%, -50%) scale(1.0)";
-}
-
-function closeModal(section){
-    let modal = document.getElementById("error-modal");
-    let currentSection = document.getElementById(section);
-    currentSection.style.pointerEvents = "auto";
-    modal.style.transform = "translate(-50%, -50%) scale(0)";
 }
 
 function checkSignUpStatus(){

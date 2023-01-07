@@ -5,7 +5,7 @@
         
         <!-- Welcome view -->
         <script type="text/view" id="welcome-view-container"> 
-            <div id="welcome-view" class="flex-container">
+            <div id="welcome-view" class="view">
                 <div id="welcome-message">
                     <h1>Twidder</h1>
                     <p class="socialize"> A unique way of communicating over the internet!</p>
@@ -92,7 +92,7 @@
         
         <!-- Profile view -->
         <script type="text/view" id="profile-view-container">
-            <div id="profile-view">
+            <div id="profile-view" class="view">
                 <!-- Home tab -->
                 <div id="home">
                     Home
@@ -105,7 +105,24 @@
             
                 <!-- Account tab -->
                 <div id="account">
-                    Account
+                    <form id="password-change-form" action="" onsubmit="validatePasswordChange(event)">
+                        <p id="new-password-message" style="text-align: center;"> Change password</p>
+                        <div class="label-input-pair flex-row-container"> 
+                            <label for="password-old" class="label">Old password</label>
+                            <input type="password" id="password-old" class="input" required>
+                        </div>
+                        <div class="label-input-pair flex-row-container"> 
+                            <label for="password-new" class="label">New password</label>
+                            <input type="password" id="password-new" class="input" required>
+                        </div>
+                        <div class="label-input-pair flex-row-container"> 
+                            <label for="password-new-again" class="label">New password again</label>
+                            <input type="password" id="password-new-again" class="input" required>
+                        </div>
+                        <div style="align-items: center;" class="flex-row-container">
+                            <input class="center-submit" type="submit" value="Enter"> 
+                        </div> 
+                    </form>
                 </div>
             </div>
         </script>
@@ -123,11 +140,11 @@
     <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">
         
         <!-- Not logged in -->
-        <div id="welcome-section">
+        <div id="welcome-section" class="container-section">
             
         </div>
         <!-- Logged in -->
-        <div id="profile-section">
+        <div id="profile-section" class="container-section">
             
         </div>
         
@@ -136,7 +153,7 @@
         <div id="error-modal" class="modal flex-column-container">
             <div id="modal-header" class="flex-row-container">
                 <div id="modal-title"></div>
-                <button onclick="closeModal('welcome-section')"
+                <button id="modal-close-button"
                         style=" margin-right : 2.5%;
                                 margin-bottom: 1%;
                                 border: none;
