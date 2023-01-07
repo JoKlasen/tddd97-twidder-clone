@@ -41,6 +41,10 @@ function setCookie(token){
     document.cookie = 'logged_in_user=' + token + '; expires=' + currentDate.toString + '; path=/';
 }
 
+function deleteCookie(){
+    document.cookie = 'logged_in_user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
+}
+
 // Returns empty string if cookieName didn't match any saved cookie
 function getCookie(cookieName){
     let cookies = document.cookie.split(';');
@@ -54,6 +58,14 @@ function getCookie(cookieName){
         }
     }
     return data;
+}
+
+function saveUser(data){
+    window.localStorage.setItem('active_user', JSON.stringify(data));
+}
+
+function deleteActiveUser(){
+    window.localStorage.removeItem('active_user');
 }
 
 function getActiveUser(){
@@ -99,7 +111,12 @@ let displayLoggedin = function() {
 
     let container = document.getElementById('profile-view-container');
     let profileSection = document.getElementById('profile-section');
-    profileSection.display = 'block';
+    let profileTabs = document.getElementById('profile-tabs');
+    
+    profileTabs.style.display = 'block';
+    profileTabs.children[0].style.color = 'purple';
+
+    profileSection.style.display = 'block';
     profileSection.innerHTML = container.innerHTML;
 }
 
@@ -223,8 +240,9 @@ function checkSignUpStatus(){
 function displayView(){
     let userData = getActiveUser();
     let loggedIn = userData.success; 
-
+    
     if (loggedIn){
+        saveUser(userData.data);
         displayLoggedin();
     } else{
         displayNotLoggedin();
@@ -233,6 +251,8 @@ function displayView(){
 
 window.onload = function(){
     console.log("page has been loaded");
-    // displayView();
-    // checkSignUpStatus();
+    // deleteCookie();
+    // deleteActiveUser();
+    displayView();
+    checkSignUpStatus();
 }
