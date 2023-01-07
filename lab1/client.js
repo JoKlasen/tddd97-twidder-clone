@@ -1,3 +1,40 @@
+// Profile functions
+let CURRENT_PROFILE_TAB = 'home';
+
+function toTab(toTabName){
+    let currentTab = document.getElementById(CURRENT_PROFILE_TAB);
+    currentTab.style.display = 'none';
+    colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
+    CURRENT_PROFILE_TAB = toTabName;
+
+    let newTabElement =document.getElementById(toTabName);
+    newTabElement.style.display = 'block';   
+}
+
+function colorAnchor(anchorID, color){
+    let currentAnchor = document.getElementById(anchorID);
+    currentAnchor.style.color = color;
+}
+
+// preventDefault to prevent the anchor element to refresh the page
+function toHome(event){
+    toTab('home');
+    colorAnchor('homeAnchor', 'purple');
+    event.preventDefault();
+}
+function toBrowse(event){
+    toTab('browse');
+    colorAnchor('browseAnchor', 'purple');
+    event.preventDefault();
+}
+function toAccount(event){
+    toTab('account');
+    colorAnchor('accountAnchor', 'purple');
+    event.preventDefault();
+}
+// /Profile scripts
+
+
 // Date might need to change 
 function setCookie(token){
     let currentDate = new Date();
@@ -13,8 +50,6 @@ function getCookie(cookieName){
         if (cookies[i].includes(cookieName)){
             let equalSign = cookies[i].indexOf('=');
             data = cookies[i].substring(equalSign + 1);
-            console.log('token: ');
-            console.log(data);
             break;
         }
     }
@@ -198,6 +233,6 @@ function displayView(){
 
 window.onload = function(){
     console.log("page has been loaded");
-    displayView();
-    checkSignUpStatus();
+    // displayView();
+    // checkSignUpStatus();
 }

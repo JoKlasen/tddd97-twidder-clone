@@ -9,6 +9,12 @@ select{
     float: right;
 }
 /* classes */
+.link-tab{
+    margin-right: 10px;
+    font-size: larger;
+    font-weight: 600;
+    color: blue;
+}
 .modal{
     border-style: groove;
     border: 3px solid black;
@@ -62,17 +68,20 @@ select{
 }
 
 /* id's */
-#modal-header{
-    border-bottom: 3px solid black;
-    font-size: 90%;
-    margin-bottom: 4%;
-    margin-top: 2%;
-    justify-content: space-between;
-    align-items: center;
+
+/* profile view */
+#home{
+    display: block;
 }
-#modal-title{
-    font-size: 140%;
+#browse{
+    display: none;
 }
+#account{
+    display: none;
+}
+/* /profile view */
+
+/* welcome view */
 #welcome-section{
     height: 100%;
     width: 100%;
@@ -115,4 +124,17 @@ select{
     height: auto;
     width: auto;
     max-height: 350px;
+}
+/* /welcome view */
+
+#modal-header{
+    border-bottom: 3px solid black;
+    font-size: 90%;
+    margin-bottom: 4%;
+    margin-top: 2%;
+    justify-content: space-between;
+    align-items: center;
+}
+#modal-title{
+    font-size: 140%;
 }
