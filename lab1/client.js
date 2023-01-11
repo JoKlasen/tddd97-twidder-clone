@@ -1,6 +1,20 @@
 // Profile functions
 let CURRENT_PROFILE_TAB = 'home';
 
+function loadPersonalInfo(){
+    let info = JSON.parse( window.localStorage.getItem('active_user') );
+    let personalInfoElements = document.getElementsByClassName('personal-info');
+
+    let i = 0;
+    for (let key in info){
+        personalInfoElements[i].innerText = key;
+        personalInfoElements[i].style = "font-weight: bold;"
+        personalInfoElements[i + 1].innerText = info[key];
+        i += 2;
+    }
+    putDotsBetweenElements("label-info-pair");    
+}
+
 function toTab(toTabName){
     let currentTab = document.getElementById(CURRENT_PROFILE_TAB);
     currentTab.style.display = 'none';
@@ -8,7 +22,7 @@ function toTab(toTabName){
     CURRENT_PROFILE_TAB = toTabName;
 
     let newTabElement = document.getElementById(toTabName);
-    newTabElement.style.display = 'block';   
+    newTabElement.style.display = 'flex';   
 }
 
 function colorAnchor(anchorID, color){
@@ -16,23 +30,41 @@ function colorAnchor(anchorID, color){
     currentAnchor.style.color = color;
 }
 
+function signOut(event){
+    colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
+    CURRENT_PROFILE_TAB = 'home';
+
+    let response = serverstub.signOut(getCookie('logged_in_user'));
+    
+    if (!response.success){
+        let modalBody = [response.message];
+        let modalTitle = 'Sign out status'; 
+        showModal('profile-section', modalBody, modalTitle);
+        return;
+    }
+    deleteCookie();
+    deleteActiveUser();
+    displayNotLoggedin();
+}
+
 // preventDefault to prevent the anchor element to refresh the page
 function toHome(event){
     toTab('home');
     colorAnchor('homeAnchor', 'purple');
-    putDotsBetweenLabelInputPair();
+    putDotsBetweenElements("label-input-pair");
+    loadPersonalInfo();
     event.preventDefault();
 }
 function toBrowse(event){
     toTab('browse');
     colorAnchor('browseAnchor', 'purple');
-    putDotsBetweenLabelInputPair();
+    putDotsBetweenElements("label-input-pair");
     event.preventDefault();
 }
 function toAccount(event){
     toTab('account');
     colorAnchor('accountAnchor', 'purple');
-    putDotsBetweenLabelInputPair();
+    putDotsBetweenElements("label-input-pair");
     event.preventDefault();
 }
 function validatePasswordChange(event){
@@ -41,18 +73,27 @@ function validatePasswordChange(event){
     let newPasswordAgain = document.getElementById('password-new-again').value;
 
     let modalBody = [];
-    let modalTitle = 'Error chaning password';
+    let modalTitle = '';
 
     if (newPassword !== newPasswordAgain){
+        modalTitle = 'Error changing password';
         modalBody = ['New passwords doesn\'t match!'];
         showModal('profile-section', modalBody, modalTitle);
         event.preventDefault()
         return; 
     }
 
-    console.log(oldPassword);
-    console.log(newPassword);
-    console.log(newPasswordAgain);
+    let response = serverstub.changePassword(getCookie('logged_in_user'), oldPassword, newPassword);
+    modalBody = [response.message];
+    modalTitle = 'Password change status: ';
+    
+    if (response.success){
+        modalTitle += 'success';
+    }else{
+        modalTitle += 'fail';
+    }
+    showModal('profile-section', modalBody, modalTitle);
+    
     event.preventDefault()
 }
 
@@ -124,9 +165,8 @@ function getActiveUser(){
     let userData = serverstub.getUserDataByToken(token);
     return userData;
 }
-
-function putDotsBetweenLabelInputPair(){
-    let wrapperDivs = document.getElementsByClassName("label-input-pair");
+function putDotsBetweenElements(elementName){
+    let wrapperDivs = document.getElementsByClassName(elementName);
     
     for (let i = 0; i < wrapperDivs.length; i++){
         let children = wrapperDivs[i].children;
@@ -141,24 +181,43 @@ function putDotsBetweenLabelInputPair(){
     }
 }
 
-function hideOtherView(viewName){
-    let otherView = document.getElementById(viewName);
-    otherView.style.display = 'none';
+// function putDotsBetweenLabelInputPair(){
+//     let wrapperDivs = document.getElementsByClassName("label-input-pair");
+    
+//     for (let i = 0; i < wrapperDivs.length; i++){
+//         let children = wrapperDivs[i].children;
+//         let labelField = children[0];
+//         let inputField = children[1];
+
+//         let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
+//         let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
+//         let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
+
+//         labelField.innerHTML += '.'.repeat(dotsBetween);
+//     }
+// }
+
+function hideOtherViews(viewNames){
+    
+    for(let i = 0; i < viewNames.length; i++){
+        document.getElementById(viewNames[i]).style.display = 'none';
+    }
 }
 
 let displayNotLoggedin = function() {
-    hideOtherView('profile-section');
+    let otherViews = ['profile-section', 'profile-tabs'];
+    hideOtherViews(otherViews);
 
     let container = document.getElementById("welcome-view-container");
     let welcomeSection = document.getElementById("welcome-section");
     welcomeSection.style.display = 'block';
 
     welcomeSection.innerHTML = container.innerHTML;
-    putDotsBetweenLabelInputPair();
+    putDotsBetweenElements("label-input-pair");
 }
 
 let displayLoggedin = function() {
-    hideOtherView('welcome-section');
+    hideOtherViews(['welcome-section']);
 
     let container = document.getElementById('profile-view-container');
     let profileSection = document.getElementById('profile-section');
@@ -169,7 +228,8 @@ let displayLoggedin = function() {
 
     profileSection.style.display = 'block';
     profileSection.innerHTML = container.innerHTML;
-    putDotsBetweenLabelInputPair();
+    putDotsBetweenElements("label-input-pair");
+    loadPersonalInfo();
 }
 
 function validateSignIn(event){

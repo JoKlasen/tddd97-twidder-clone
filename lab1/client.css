@@ -9,12 +9,20 @@ select{
     float: right;
 }
 /* classes */
+.label-info-pair{
+    align-items: center;
+    justify-content: space-between;
+}
+.personal-info{
+    font-size: small;
+    /* flex: 1; */
+}
 .container-section{
     height: 100%;
     width: 100%;
 }
 .view{
-    border: 3px solid black;
+    /* border: 3px solid black; */
     display: flex;
     height: 410px;
     width: 600px;
@@ -40,7 +48,7 @@ select{
     position: fixed;
     display: flex;
     height: 350px;
-    width: 350px;
+    width: 450px;
     z-index: 10;
 }
 .label {
@@ -75,7 +83,6 @@ select{
     border-width: 3px;
     width: 30%;
     margin: auto;
-    /* margin-top: 1px;     */
 }
 .login-submit{
     border-width: 3px;
@@ -87,14 +94,38 @@ select{
 /* id's */
 
 /* profile view */
+#info-box{
+    border: 2px solid red;
+    width: 40%;
+}
+#message-wall{
+    border: 2px solid blueviolet;
+    flex-grow: 1;
+}
+#sign-out-container{
+    flex-grow: 1;
+    align-items: center
+}
 #home{
-    display: block;
+    border: 2.5px solid black;
+    max-width: 600;
+    max-height: 410;
+    width: 100%;
+    height: 100%;
+    background-color:rgb(248, 239, 210);
+    display: flex;
+    flex-direction: row;
 }
 #browse{
     display: none;
+    flex-direction: column;
 }
 #account{
+    border: 2.5px solid black;
     display: none;
+    flex-direction: column;
+    max-width: 600;
+    max-height: 410;
     width: 100%;
     height: 100%;
     background-color:rgb(248, 239, 210);
