@@ -8,6 +8,9 @@ select{
     border-width: 2px;
     float: right;
 }
+body{
+    background-size: 100%;
+}
 /* classes */
 .label-info-pair{
     align-items: center;
@@ -22,7 +25,6 @@ select{
     width: 100%;
 }
 .view{
-    /* border: 3px solid black; */
     display: flex;
     height: 410px;
     width: 600px;
