@@ -68,14 +68,14 @@ function toAccount(event){
     event.preventDefault();
 }
 function validatePasswordChange(event){
-    let oldPassword = document.getElementById('password-old').value;
-    let newPassword = document.getElementById('password-new').value;
-    let newPasswordAgain = document.getElementById('password-new-again').value;
+    let oldPasswordElement = document.getElementById('password-old');
+    let newPasswordElement = document.getElementById('password-new');
+    let newPasswordAgainElement = document.getElementById('password-new-again');
 
     let modalBody = [];
     let modalTitle = '';
 
-    if (newPassword !== newPasswordAgain){
+    if (newPasswordElement.value !== newPasswordAgainElement.value){
         modalTitle = 'Error changing password';
         modalBody = ['New passwords doesn\'t match!'];
         showModal('profile-section', modalBody, modalTitle);
@@ -83,7 +83,7 @@ function validatePasswordChange(event){
         return; 
     }
 
-    let response = serverstub.changePassword(getCookie('logged_in_user'), oldPassword, newPassword);
+    let response = serverstub.changePassword(getCookie('logged_in_user'), oldPasswordElement.value, newPasswordElement.value);
     modalBody = [response.message];
     modalTitle = 'Password change status: ';
     
@@ -94,7 +94,23 @@ function validatePasswordChange(event){
     }
     showModal('profile-section', modalBody, modalTitle);
     
-    event.preventDefault()
+    oldPasswordElement.value = '';
+    newPasswordElement.value = '';
+    newPasswordAgainElement.value = '';
+
+    event.preventDefault();
+}
+
+function sendMessage(event){
+    let token = getCookie('logged_in_user');
+    let contentBox = document.getElementById("send-message-text");
+    let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
+    console.log(token);
+    console.log(contentBox.value);
+    console.log(toEmail);
+
+    serverstub.postMessage(token, contentBox.value, toEmail);
+    contentBox.value = '';
 }
 
 // /Profile function
