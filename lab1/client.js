@@ -15,6 +15,55 @@ function loadPersonalInfo(){
     putDotsBetweenElements("label-info-pair");    
 }
 
+function clearChildren(parent){
+    while (parent.firstChild){
+        parent.removeChild(parent.firstChild);
+    }
+    
+}
+
+function loadMessages(){
+    let token = getCookie('logged_in_user');
+    let userMessages = serverstub.getUserMessagesByToken(token);
+    let messageData = userMessages.data;
+    let templateMessageBox = document.getElementById("template-message-box");
+    let messageContainer = document.getElementById('posted-messages');
+
+    console.log(templateMessageBox);
+    clearChildren(messageContainer);
+    
+    for(let key in messageData){
+        // console.log(messageData);
+        console.log(messageData[key].content);
+        let currentMessageBox = templateMessageBox.cloneNode(true);
+        currentMessageBox.setAttribute("id", "message-box-"+key);
+        console.log(currentMessageBox.children);
+        let paras = currentMessageBox.children;
+        paras[0].innerHTML = messageData[key].writer;
+        paras[1].innerHTML = messageData[key].content;
+
+        currentMessageBox.classList.remove("hide");
+        console.log(currentMessageBox);
+        messageContainer.appendChild(currentMessageBox);
+ 
+    }
+
+
+}
+
+function sendMessage(event){
+    let token = getCookie('logged_in_user');
+    let contentBox = document.getElementById("send-message-text");
+    let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
+    console.log(token);
+    console.log(contentBox.value);
+    console.log(toEmail);
+
+    serverstub.postMessage(token, contentBox.value, toEmail);
+    contentBox.value = '';
+    loadMessages();
+}
+
 function toTab(toTabName){
     let currentTab = document.getElementById(CURRENT_PROFILE_TAB);
     currentTab.style.display = 'none';
@@ -99,18 +148,6 @@ function validatePasswordChange(event){
     newPasswordAgainElement.value = '';
 
     event.preventDefault();
-}
-
-function sendMessage(event){
-    let token = getCookie('logged_in_user');
-    let contentBox = document.getElementById("send-message-text");
-    let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
-    console.log(token);
-    console.log(contentBox.value);
-    console.log(toEmail);
-
-    serverstub.postMessage(token, contentBox.value, toEmail);
-    contentBox.value = '';
 }
 
 // /Profile function
@@ -230,6 +267,7 @@ let displayLoggedin = function() {
     profileSection.innerHTML = container.innerHTML;
     putDotsBetweenElements("label-input-pair");
     loadPersonalInfo();
+    loadMessages();
 }
 
 function validateSignIn(event){

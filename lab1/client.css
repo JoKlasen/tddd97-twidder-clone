@@ -29,6 +29,7 @@ body{
     border-radius: 10px;
     padding: 5px;
     margin: 5px;
+    display: none;
 }
 .message-box p{
     margin: 0;
@@ -115,12 +116,27 @@ body{
     margin-left: 1%;
     margin-right: 1%;
 }
+.hide{              /* has to be below flex-column-container */
+    display: none;
+}
+.bold-font{
+    font-size: large;
+    font-weight: bold;
+}
+.flex-fill{
+    flex : 1;
+}
+.button-style{
+    border-width: 3px;
+}
 
 /* id's */
 
 /* profile view */
 #posted-messages{
     /* border-bottom: 3px solid red; */
+    overflow-y: scroll;
+
     height: 80%;
     /* max-width: 100%; */
 }
@@ -130,13 +146,8 @@ body{
     flex : 1;
 }
 #send-message-text{
-    width: 80%;
+    width: 90%;
     resize: none;
-}
-#send-message-button{
-    /* cursor: pointer; */
-    flex : 1;
-    border-width: 3px;
 }
 #info-box{
     border: 3px solid black;

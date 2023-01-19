@@ -40,27 +40,27 @@
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="first-name" class="label">First name</label>
-                                <input type="text" id="first-name" class="input" >
+                                <input type="text" id="first-name" class="input" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="last-name" class="label">Last name</label>
-                                <input type="text" id="last-name" class="input" >
+                                <input type="text" id="last-name" class="input" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="city" class="label">City</label>
-                                <input type="text" id="city" class="input" >
+                                <input type="text" id="city" class="input" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="country" class="label">Country</label>
-                                <input type="text" id="country" class="input" >
+                                <input type="text" id="country" class="input" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="email-new" class="label">Email</label>
-                                <input type="email" id="email-new" class="input" >
+                                <input type="email" id="email-new" class="input" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
@@ -96,19 +96,20 @@
         <script type="text/html" id="profile-view-container">
             <div id="profile-view" class="view">
                 <!-- Home tab -->
+                
                 <div id="home">
                     <div id="info-box" class="flex-column-container">
                         <p style="  font-size: medium;
                                     font-weight: bold;"
                         >
-                            Personal info
-                        </p>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
+                        Personal info
+                    </p>
+                    <div class="label-info-pair flex-row-container">
+                        <p class="personal-info"></p>
+                        <p class="personal-info"></p>
+                    </div>
+                    <div class="label-info-pair flex-row-container">
+                        <p class="personal-info"></p>
                             <p class="personal-info"></p>
                         </div>
                         <div class="label-info-pair flex-row-container">
@@ -128,17 +129,17 @@
                             <p class="personal-info"></p>
                         </div>
                     </div>
-
+                    
                     <div id="message-container" class="flex-column-container">
                         <div id="posted-messages">
-                            <div id="message-test-box" class="message-box flex-column-container">
-                                <p class="writer">Författare</p>
-                                <p class="message">Sida 1 sdakfjsadlöfkjzdfvzdfvzdfvzdfvzdvdvdzvzdvasdfölkasjdfsdafgdsfgsdfg sdfgsdgsfgdsfgdfsdfgsdfgölskfj</p>
-                            </div>
+ 
                         </div>
                         <div id="send-messages" class="flex-row-container">
                             <textarea id="send-message-text"></textarea>
-                            <button id="send-message-button" onclick="sendMessage(event)" > Send message! </button>     
+                            <div class="flex-column-container flex-fill">
+                                <button id="send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
+                                <button id="refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -174,6 +175,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- template for message boxes -->
+            <div id="template-message-box" class="message-box flex-column-container hide">
+                <p class="writer"></p>
+                <p class="message"></p>
+            </div>
+
         </script>
         <!-- /Profile view -->
 
