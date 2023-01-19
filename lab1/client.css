@@ -3,10 +3,14 @@ h1{
     font-size: 200%;
     text-align: center;
 }
+button{
+    cursor: pointer;
+}
 select{
     width: 50%;
     border-width: 2px;
     float: right;
+    cursor: pointer;
 }
 body{
     background-size: 100%;
@@ -99,11 +103,13 @@ body{
     flex-direction: column;
 }
 .center-submit{
+    cursor: pointer;
     border-width: 3px;
     width: 30%;
     margin: auto;
 }
 .login-submit{
+    cursor: pointer;
     border-width: 3px;
     margin-top: 1px;
     margin-left: 1%;
@@ -128,6 +134,7 @@ body{
     resize: none;
 }
 #send-message-button{
+    /* cursor: pointer; */
     flex : 1;
     border-width: 3px;
 }
