@@ -95,57 +95,125 @@
         <!-- ändra till type="text/view" innan inlämning-->
         <script type="text/html" id="profile-view-container">
             <div id="profile-view" class="view">
-                <!-- Home tab -->
                 
-                <div id="home">
-                    <div id="info-box" class="flex-column-container">
+                <!-- Home tab -->
+                <div id="home" class="flex-row-container">
+                    
+                    <!-- Display own info -->
+                    <div id="home-info-box" class="info-box flex-column-container">
                         <p style="  font-size: medium;
                                     font-weight: bold;"
                         >
-                        Personal info
-                    </p>
-                    <div class="label-info-pair flex-row-container">
-                        <p class="personal-info"></p>
-                        <p class="personal-info"></p>
+                            Personal info
+                        </p>
+                        
+                        <div id="home-user-info" class="info-pair-container flex-column-container">
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="label-info-pair flex-row-container">
-                        <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                        <div class="label-info-pair flex-row-container">
-                            <p class="personal-info"></p>
-                            <p class="personal-info"></p>
-                        </div>
-                    </div>
+
+                    <!-- Post message on own wall -->
+                    <div id="home-message-container" class="message-container flex-column-container">
+                        <div id="home-posted-messages" class="posted-messages">
                     
-                    <div id="message-container" class="flex-column-container">
-                        <div id="posted-messages">
- 
                         </div>
-                        <div id="send-messages" class="flex-row-container">
-                            <textarea id="send-message-text"></textarea>
+                        <div id="home-send-messages" class="send-messages flex-row-container">
+                            <textarea id="home-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
-                                <button id="send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
-                                <button id="refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
+                                <button id="home-send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
+                                <button id="home-refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
                             </div>
                         </div>
                     </div>
                 </div>
             
                 <!-- Browse tab -->
-                <div id="browse">
+                <div id="browse" class="flex-row-container" style="display: none">
+                    <div id="browse-info-box" class="info-box flex-column-container">
+                        <p style="  font-size: medium;
+                                    font-weight: bold;"
+                        >
+                            Personal info
+                        </p>
+                        <div id="browse-user-info" class="info-pair-container flex-column-container">
+                            <!-- Display user info -->
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                            <div class="label-info-pair flex-row-container">
+                                <p class="personal-info"></p>
+                                <p class="personal-info"></p>
+                            </div>
+                        </div>
+                        <!-- Search user info -->
+                        <div id="browse-search-user" class="search-box flex-column-container">
+                            <p> Search for another user with an email</p>
+                            
+                            <form id="search-user-form" action="" onsubmit="searchAndDisplayUser(event)" class="flex-row-container">
+                                <input type="email" id="search-user-email">
+                                <input type="submit" value="Search" class="button-style">
+                            </form>
+
+                            <!-- <div class="flex-column-container flex-fill">
+                                <button id="search-user-button" class="button-style flex-fill" onclick="searchUser(event)" > Search </button>     
+                                <button id="refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
+                            </div> -->
+                        </div>
+                    </div>
+                    
+                    <!-- Post message on user wall -->
+                    <div id="browse-message-container" class="message-container flex-column-container">
+                        <div id="browse-posted-messages" class="posted-messages">
+
+                        </div>
+                        <div id="browse-send-messages" class="send-messages flex-row-container">
+                            <textarea id="browse-send-message-text" class="send-message-text"></textarea>
+                            <div class="flex-column-container flex-fill">
+                                <button id="browse-send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
+                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             
                 <!-- Account tab -->

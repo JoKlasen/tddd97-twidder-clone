@@ -1,16 +1,45 @@
 // Profile functions
 let CURRENT_PROFILE_TAB = 'home';
 
-function loadPersonalInfo(){
-    let info = JSON.parse( window.localStorage.getItem('active_user') );
-    let personalInfoElements = document.getElementsByClassName('personal-info');
+function loadPersonalInfo(userEmail = null){
+
+    let info = '';
+    if (userEmail === null){
+
+        info = JSON.parse( window.localStorage.getItem('active_user') );
+        console.log(info);
+    }
+    else{
+        let token = getCookie('logged_in_user');
+        let userData = serverstub.getUserDataByEmail(token, userEmail);
+        if (!userData.success){
+            // User email doesn't exist, handle this in some way
+            return;
+        }
+        info = userData.data;
+        console.log(info);
+    }
+
+    let personalInfoContainer = document.getElementById(CURRENT_PROFILE_TAB + '-user-info');
+    let parasContainer = personalInfoContainer.children;
+    console.log("Paragraphs container:");
+    console.log(parasContainer);
 
     let i = 0;
+    let j = 0;
     for (let key in info){
-        personalInfoElements[i].innerText = key;
-        personalInfoElements[i].style = "font-weight: bold;"
-        personalInfoElements[i + 1].innerText = info[key];
-        i += 2;
+        let current_paras = parasContainer[j].children;
+        console.log("parapgraphs:");
+        console.log(current_paras);
+
+        console.log("info:");
+        console.log(info[key] + " " + key);
+
+        current_paras[0].innerText = key;
+        current_paras[0].style = "font-weight: bold;";
+        current_paras[1].innerText = info[key];
+        
+        j++;
     }
     putDotsBetweenElements("label-info-pair");    
 }
@@ -18,18 +47,22 @@ function loadPersonalInfo(){
 function clearChildren(parent){
     while (parent.firstChild){
         parent.removeChild(parent.firstChild);
-    }
-    
+    }   
 }
 
-function loadMessages(){
+function loadMessages(email = null){
     let token = getCookie('logged_in_user');
-    let userMessages = serverstub.getUserMessagesByToken(token);
+    let userMessages = '';
+    if (email === null){
+        userMessages = serverstub.getUserMessagesByToken(token);
+    }
+    else{
+        userMessages = serverstub.getUserMessagesByEmail(token, email);
+    }
     let messageData = userMessages.data;
     let templateMessageBox = document.getElementById("template-message-box");
-    let messageContainer = document.getElementById('posted-messages');
+    let messageContainer = document.getElementById(CURRENT_PROFILE_TAB + '-posted-messages');
 
-    console.log(templateMessageBox);
     clearChildren(messageContainer);
     
     for(let key in messageData){
@@ -45,15 +78,12 @@ function loadMessages(){
         currentMessageBox.classList.remove("hide");
         console.log(currentMessageBox);
         messageContainer.appendChild(currentMessageBox);
- 
     }
-
-
 }
 
 function sendMessage(event){
     let token = getCookie('logged_in_user');
-    let contentBox = document.getElementById("send-message-text");
+    let contentBox = document.getElementById(CURRENT_PROFILE_TAB + "-send-message-text");
     let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
     console.log(token);
     console.log(contentBox.value);
@@ -62,6 +92,13 @@ function sendMessage(event){
     serverstub.postMessage(token, contentBox.value, toEmail);
     contentBox.value = '';
     loadMessages();
+}
+
+function searchAndDisplayUser(event){
+    let userEmail = document.getElementById('search-user-email').value;
+    console.log(userEmail);
+    loadPersonalInfo(userEmail);
+    event.preventDefault();
 }
 
 function toTab(toTabName){
