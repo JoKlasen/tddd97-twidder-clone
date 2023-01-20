@@ -1,5 +1,13 @@
 <!-- <!DOCTYPE html> Kraschar sidan for some reason?-->
 <html> 
+    <!-- 
+        TODO: 
+                Skicka med this vid t.ex. onsubmit för att få med t.ex. formelementet
+
+                Error-modal förhindrar inte användaren att klicka på home,browse,account
+
+                Home tab blir bredare än 410px vid långa meddelanden (men home-diven är fortfarande 410px)
+     -->
     <head> 
         <title>Twidder</title>
         <link href="client.css" type="text/css" rel="stylesheet">
@@ -97,7 +105,7 @@
             <div id="profile-view" class="view">
                 
                 <!-- Home tab -->
-                <div id="home" class="flex-row-container">
+                <div id="home" class="max-dimensions flex-row-container">
                     
                     <!-- Display own info -->
                     <div id="home-info-box" class="info-box flex-column-container">
@@ -151,7 +159,7 @@
                 </div>
             
                 <!-- Browse tab -->
-                <div id="browse" class="flex-row-container" style="display: none">
+                <div id="browse" class="max-dimensions flex-row-container" style="display: none">
                     <div id="browse-info-box" class="info-box flex-column-container">
                         <p style="  font-size: medium;
                                     font-weight: bold;"
@@ -190,14 +198,9 @@
                             <p> Search for another user with an email</p>
                             
                             <form id="search-user-form" action="" onsubmit="searchAndDisplayUser(event)" class="flex-row-container">
-                                <input type="email" id="search-user-email">
-                                <input type="submit" value="Search" class="button-style">
+                                <input type="email" id="search-user-email" class="small-margin-right input">
+                                <input type="submit" value="Search" class="button-style flex-fill">
                             </form>
-
-                            <!-- <div class="flex-column-container flex-fill">
-                                <button id="search-user-button" class="button-style flex-fill" onclick="searchUser(event)" > Search </button>     
-                                <button id="refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
-                            </div> -->
                         </div>
                     </div>
                     
@@ -217,7 +220,7 @@
                 </div>
             
                 <!-- Account tab -->
-                <div id="account">
+                <div id="account" class="max-dimensions">
                     <form id="password-change-form" action="" onsubmit="validatePasswordChange(event)">
                         <p id="new-password-message" style="text-align: center;"> Change password</p>
                         <div class="label-input-pair flex-row-container"> 

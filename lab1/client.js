@@ -14,6 +14,7 @@ function loadPersonalInfo(userEmail = null){
         let userData = serverstub.getUserDataByEmail(token, userEmail);
         if (!userData.success){
             // User email doesn't exist, handle this in some way
+            console.log("user doesn't exist")
             return;
         }
         info = userData.data;
