@@ -1,0 +1,4 @@
+1.  We validate data before so we don't send unnecessary requests which will not
+    only load the server when we don't need to but also we as users will
+    experience a delay of the validation because sending over network can take
+    some time.
