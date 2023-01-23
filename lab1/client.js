@@ -7,34 +7,29 @@ function loadPersonalInfo(userEmail = null){
     if (userEmail === null){
 
         info = JSON.parse( window.localStorage.getItem('active_user') );
-        console.log(info);
     }
     else{
         let token = getCookie('logged_in_user');
         let userData = serverstub.getUserDataByEmail(token, userEmail);
         if (!userData.success){
-            // User email doesn't exist, handle this in some way
-            console.log("user doesn't exist")
+            let modalBody = [userData.message];
+            let modalTitle = 'User doesn\'t exist :(';
+            showModal('profile-section', modalBody, modalTitle);
             return;
         }
+        else{
+            window.localStorage.setItem('currently_viewed_profile', userEmail);
+        }
         info = userData.data;
-        console.log(info);
     }
 
     let personalInfoContainer = document.getElementById(CURRENT_PROFILE_TAB + '-user-info');
     let parasContainer = personalInfoContainer.children;
-    console.log("Paragraphs container:");
-    console.log(parasContainer);
 
     let i = 0;
     let j = 0;
     for (let key in info){
         let current_paras = parasContainer[j].children;
-        console.log("parapgraphs:");
-        console.log(current_paras);
-
-        console.log("info:");
-        console.log(info[key] + " " + key);
 
         current_paras[0].innerText = key;
         current_paras[0].style = "font-weight: bold;";
@@ -49,6 +44,13 @@ function clearChildren(parent){
     while (parent.firstChild){
         parent.removeChild(parent.firstChild);
     }   
+}
+
+function loadMessagesFromBrowse(){
+    let email = window.localStorage.getItem('currently_viewed_profile');
+    if (email !== null){
+        loadMessages(email);
+    }
 }
 
 function loadMessages(email = null){
@@ -67,17 +69,14 @@ function loadMessages(email = null){
     clearChildren(messageContainer);
     
     for(let key in messageData){
-        // console.log(messageData);
-        console.log(messageData[key].content);
         let currentMessageBox = templateMessageBox.cloneNode(true);
         currentMessageBox.setAttribute("id", "message-box-"+key);
-        console.log(currentMessageBox.children);
+
         let paras = currentMessageBox.children;
         paras[0].innerHTML = messageData[key].writer;
         paras[1].innerHTML = messageData[key].content;
 
         currentMessageBox.classList.remove("hide");
-        console.log(currentMessageBox);
         messageContainer.appendChild(currentMessageBox);
     }
 }
@@ -85,20 +84,22 @@ function loadMessages(email = null){
 function sendMessage(event){
     let token = getCookie('logged_in_user');
     let contentBox = document.getElementById(CURRENT_PROFILE_TAB + "-send-message-text");
-    let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
-    console.log(token);
-    console.log(contentBox.value);
-    console.log(toEmail);
+    let toEmail = null;
+    toEmail = window.localStorage.getItem('currently_viewed_profile');
+
+    if (toEmail == null){
+        toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
+    }
 
     serverstub.postMessage(token, contentBox.value, toEmail);
     contentBox.value = '';
-    loadMessages();
+    loadMessages(toEmail);
 }
 
 function searchAndDisplayUser(event){
     let userEmail = document.getElementById('search-user-email').value;
-    console.log(userEmail);
     loadPersonalInfo(userEmail);
+    loadMessages(userEmail);
     event.preventDefault();
 }
 
@@ -372,7 +373,6 @@ function validateSignUp(event){
     }
     
     window.localStorage.setItem('sign-up-message', response.message);
-    console.log(response);
 
     return true;
 }

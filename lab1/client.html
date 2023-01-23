@@ -198,7 +198,7 @@
                             <p> Search for another user with an email</p>
                             
                             <form id="search-user-form" action="" onsubmit="searchAndDisplayUser(event)" class="flex-row-container">
-                                <input type="email" id="search-user-email" class="small-margin-right input">
+                                <input type="email" id="search-user-email" class="small-margin-right input" required>
                                 <input type="submit" value="Search" class="button-style flex-fill">
                             </form>
                         </div>
@@ -213,7 +213,7 @@
                             <textarea id="browse-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
                                 <button id="browse-send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
-                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
+                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessagesFromBrowse()"> &#8635; </button>
                             </div>
                         </div>
                     </div>
@@ -273,8 +273,10 @@
         </div>
         <!-- Logged in -->
         <div id="profile-section" class="container-section">
-            
+        <!-- <script type="text/javascript">alert(1337);</script> -->
         </div>
+
+
         
                 
         <!-- Error popup -->

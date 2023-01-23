@@ -155,7 +155,6 @@ body{
     /* border: 3px solid blue; */
     border-top: 3px solid black;
     flex : 1;
-    /* align-self: flex-end; */    /* Tror inte denna var här någonsin, tror jag råkade lägga till den av misstag */
 }
 .send-message-text{
     width: 90%;
