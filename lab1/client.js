@@ -81,9 +81,9 @@ function loadMessages(email = null){
     }
 }
 
-function sendMessage(event){
+function sendMessage(formElement, event){    
     let token = getCookie('logged_in_user');
-    let contentBox = document.getElementById(CURRENT_PROFILE_TAB + "-send-message-text");
+    let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
     let toEmail = null;
     toEmail = window.localStorage.getItem('currently_viewed_profile');
 
@@ -94,6 +94,7 @@ function sendMessage(event){
     serverstub.postMessage(token, contentBox.value, toEmail);
     contentBox.value = '';
     loadMessages(toEmail);
+    event.preventDefault();
 }
 
 function searchAndDisplayUser(event){
@@ -131,7 +132,8 @@ function signOut(event){
         return;
     }
     deleteCookie();
-    deleteActiveUser();
+    deleteUser('active_user');
+    deleteUser('currently_viewed_profile');
     displayNotLoggedin();
 }
 
@@ -248,8 +250,8 @@ function saveUser(data){
     window.localStorage.setItem('active_user', JSON.stringify(data));
 }
 
-function deleteActiveUser(){
-    window.localStorage.removeItem('active_user');
+function deleteUser(user){
+    window.localStorage.removeItem(user);
 }
 
 function getActiveUser(){
@@ -413,8 +415,6 @@ function displayView(){
 
 window.onload = function(){
     console.log("page has been loaded");
-    // deleteCookie();
-    // deleteActiveUser();
     displayView();
     checkSignUpStatus();
 }

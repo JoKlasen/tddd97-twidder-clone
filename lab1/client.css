@@ -145,16 +145,13 @@ body{
     max-width: 380px;
 }
 .posted-messages{
-    /* border-bottom: 3px solid red; */
     overflow-y: scroll;
-
     height: 80%;
-    /* max-width: 100%; */
 }
 .send-messages{
-    /* border: 3px solid blue; */
     border-top: 3px solid black;
     flex : 1;
+    margin: 0;
 }
 .send-message-text{
     width: 90%;

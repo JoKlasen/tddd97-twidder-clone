@@ -2,20 +2,17 @@
 <html> 
     <!-- 
         TODO: 
-                Skicka med this vid t.ex. onsubmit för att få med t.ex. formelementet
-
                 Error-modal förhindrar inte användaren att klicka på home,browse,account
 
                 Home tab blir bredare än 410px vid långa meddelanden (men home-diven är fortfarande 410px)
 
-                Ta bort currently view profile
      -->
     <head> 
         <title>Twidder</title>
         <link href="client.css" type="text/css" rel="stylesheet">
         <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQ7E8BoSBXOZsVo5bgkEweEzghFTn7vRYJw&usqp=CAU">        <!-- Welcome view -->
-        <!-- ändra till type="text/view" innan inlämning-->
-        <script type="text/view" id="welcome-view-container"> 
+        
+        <script type="text/html" id="welcome-view-container"> 
             <div id="welcome-view" class="view">
                 <div id="welcome-message">
                     <h1>Twidder</h1>
@@ -102,8 +99,7 @@
         <!-- /Welcome view -->
         
         <!-- Profile view -->
-        <!-- ändra till type="text/view" innan inlämning-->
-        <script type="text/view" id="profile-view-container">
+        <script type="text/html" id="profile-view-container">
             <div id="profile-view" class="view">
                 
                 <!-- Home tab -->
@@ -150,13 +146,21 @@
                         <div id="home-posted-messages" class="posted-messages">
                     
                         </div>
-                        <div id="home-send-messages" class="send-messages flex-row-container">
+
+                        <!-- <div id="home-send-messages" class="send-messages flex-row-container">   
                             <textarea id="home-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
-                                <button id="home-send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
+                                <button id="home-send-message-button" class="button-style flex-fill" onclick="sendMessage(this)" > Send </button>     
                                 <button id="home-refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
                             </div>
-                        </div>
+                        </div>     -->
+                        <form action="" onsubmit="sendMessage(this, event)" id="home-send-messages" class="send-messages flex-row-container">
+                            <textarea id="home-send-message-text" class="send-message-text"></textarea>
+                            <div class="flex-column-container flex-fill">
+                                <input id="home-send-message-button" class="button-style flex-fill" value="Send" type="submit">    
+                                <button id="home-refresh-messages" class="bold-font button-style" onclick="loadMessages()" type="button"> &#8635; </button> <!-- att ge knappen type="button" förhindrar den att submitta formen -->
+                            </div>
+                        </form>
                     </div>
                 </div>
             
@@ -209,13 +213,13 @@
                     <!-- Post message on user wall -->
                     <div id="browse-message-container" class="message-container flex-column-container">
                         <div id="browse-posted-messages" class="posted-messages">
-
                         </div>
-                        <div id="browse-send-messages" class="send-messages flex-row-container">
+
+                        <form action="" onsubmit="sendMessage(this, event)" id="browse-send-messages" class="send-messages flex-row-container">
                             <textarea id="browse-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
-                                <button id="browse-send-message-button" class="button-style flex-fill" onclick="sendMessage(event)" > Send </button>     
-                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessagesFromBrowse()"> &#8635; </button>
+                                <input id="browse-send-message-button" class="button-style flex-fill" value="Send" type="submit">     
+                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessagesFromBrowse()" type="button"> &#8635; </button>
                             </div>
                         </div>
                     </div>
