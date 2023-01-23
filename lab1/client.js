@@ -283,7 +283,7 @@ function hideOtherViews(viewNames){
 }
 
 let displayNotLoggedin = function() {
-    let otherViews = ['profile-section', 'profile-tabs'];
+    let otherViews = ['profile-section'];
     hideOtherViews(otherViews);
 
     let container = document.getElementById("welcome-view-container");
@@ -299,13 +299,25 @@ let displayLoggedin = function() {
 
     let container = document.getElementById('profile-view-container');
     let profileSection = document.getElementById('profile-section');
-    let profileTabs = document.getElementById('profile-tabs');
+    profileSection.innerHTML = '';
+
+    let profileTabsTemplate = document.getElementById('profile-tabs-header-template');
+
+    let profileTabs = profileTabsTemplate.cloneNode(true);
     
+    profileTabs.setAttribute('id', 'profile-tabs')
+    profileTabs.children[0].setAttribute('id', 'homeAnchor');
+    profileTabs.children[1].setAttribute('id', 'browseAnchor');
+    profileTabs.children[2].setAttribute('id', 'accountAnchor');
+
+
     profileTabs.style.display = 'block';
     profileTabs.children[0].style.color = 'purple';
 
     profileSection.style.display = 'block';
-    profileSection.innerHTML = container.innerHTML;
+    profileSection.appendChild(profileTabs);
+    profileSection.innerHTML += container.innerHTML;
+
     putDotsBetweenElements("label-input-pair");
     loadPersonalInfo();
     loadMessages();

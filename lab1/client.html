@@ -2,10 +2,7 @@
 <html> 
     <!-- 
         TODO: 
-                Error-modal förhindrar inte användaren att klicka på home,browse,account
-
                 Home tab blir bredare än 410px vid långa meddelanden (men home-diven är fortfarande 410px)
-
      -->
     <head> 
         <title>Twidder</title>
@@ -221,7 +218,7 @@
                                 <input id="browse-send-message-button" class="button-style flex-fill" value="Send" type="submit">     
                                 <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessagesFromBrowse()" type="button"> &#8635; </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             
@@ -258,28 +255,29 @@
                 <p class="writer"></p>
                 <p class="message"></p>
             </div>
-
+            
+            
         </script>
         <!-- /Profile view -->
+
+        <div id="profile-tabs-header-template" style="display : none;">
+            <a href="" onclick="toHome(event)" class="link-tab"> Home </a>
+            <a href="" onclick="toBrowse(event)" class="link-tab"> Browse </a>
+            <a href="" onclick="toAccount(event)" class="link-tab"> Account </a>
+        </div>
 
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
 
     </head>
-    <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">
-        <div id="profile-tabs" style="display: none;">
-            <a href="" id="homeAnchor" onclick="toHome(event)" class="link-tab"> Home </a>
-            <a href="" id="browseAnchor" onclick="toBrowse(event)" class="link-tab"> Browse </a>
-            <a href="" id="accountAnchor" onclick="toAccount(event)" class="link-tab"> Account </a>
-        </div>
-        
+    <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">        
         <!-- Not logged in -->
         <div id="welcome-section" class="container-section">
             
         </div>
         <!-- Logged in -->
         <div id="profile-section" class="container-section">
-        <!-- <script type="text/javascript">alert(1337);</script> -->
+
         </div>
 
 
