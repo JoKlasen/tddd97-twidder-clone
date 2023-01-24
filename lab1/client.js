@@ -9,7 +9,7 @@ function loadPersonalInfo(userEmail = null){
         info = JSON.parse( window.localStorage.getItem('active_user') );
     }
     else{
-        let token = getCookie('logged_in_user');
+        let token = getToken();
         let userData = serverstub.getUserDataByEmail(token, userEmail);
         if (!userData.success){
             let modalBody = [userData.message];
@@ -54,7 +54,7 @@ function loadMessagesFromBrowse(){
 }
 
 function loadMessages(email = null){
-    let token = getCookie('logged_in_user');
+    let token = getToken();
     let userMessages = '';
     if (email === null){
         userMessages = serverstub.getUserMessagesByToken(token);
@@ -82,7 +82,7 @@ function loadMessages(email = null){
 }
 
 function sendMessage(formElement, event){    
-    let token = getCookie('logged_in_user');
+    let token = getCookie();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
     let toEmail = null;
     toEmail = window.localStorage.getItem('currently_viewed_profile');
@@ -123,7 +123,7 @@ function signOut(event){
     colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
     CURRENT_PROFILE_TAB = 'home';
 
-    let response = serverstub.signOut(getCookie('logged_in_user'));
+    let response = serverstub.signOut(getToken());
     
     if (!response.success){
         let modalBody = [response.message];
@@ -131,7 +131,7 @@ function signOut(event){
         showModal('profile-section', modalBody, modalTitle);
         return;
     }
-    deleteCookie();
+    deleteToken();
     deleteUser('active_user');
     deleteUser('currently_viewed_profile');
     displayNotLoggedin();
@@ -173,7 +173,7 @@ function validatePasswordChange(event){
         return; 
     }
 
-    let response = serverstub.changePassword(getCookie('logged_in_user'), oldPasswordElement.value, newPasswordElement.value);
+    let response = serverstub.changePassword(getToken(), oldPasswordElement.value, newPasswordElement.value);
     modalBody = [response.message];
     modalTitle = 'Password change status: ';
     
@@ -220,30 +220,16 @@ function showModal(section, modalBody, modalTitle){
     });
 }
 
-
-// Date might need to change 
-function setCookie(token){
-    let currentDate = new Date();
-    document.cookie = 'logged_in_user=' + token + '; expires=' + currentDate.toString + '; path=/';
+function setToken(token){
+    window.localStorage.setItem('logged_in_user', token);
 }
 
-function deleteCookie(){
-    document.cookie = 'logged_in_user=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
+function deleteToken(){
+    window.localStorage.removeItem('logged_in_user');
 }
 
-// Returns empty string if cookieName didn't match any saved cookie
-function getCookie(cookieName){
-    let cookies = document.cookie.split(';');
-    let data = '';
-    
-    for (let i = 0; i < cookies.length; i++){
-        if (cookies[i].includes(cookieName)){
-            let equalSign = cookies[i].indexOf('=');
-            data = cookies[i].substring(equalSign + 1);
-            break;
-        }
-    }
-    return data;
+function getToken(){
+    return window.localStorage.getItem('logged_in_user');
 }
 
 function saveUser(data){
@@ -255,7 +241,7 @@ function deleteUser(user){
 }
 
 function getActiveUser(){
-    let token = getCookie('logged_in_user');
+    let token = getToken();
     let userData = serverstub.getUserDataByToken(token);
     return userData;
 }
@@ -338,7 +324,7 @@ function validateSignIn(event){
         return false;
     }
 
-    setCookie(response.data);
+    setToken(response.data);
     displayView();
 
     // No refresh of the webpage. Profile view loaded manually.
