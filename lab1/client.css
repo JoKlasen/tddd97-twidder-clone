@@ -14,6 +14,8 @@ select{
 }
 body{
     background-size: 100%;
+    background-image: url('pinto_ensvensktiger.JPEG');
+    font-family: 'Courier New', Courier, monospace;
 }
 /* classes */
 .writer{
@@ -119,9 +121,19 @@ body{
 .hide{              /* has to be below flex-column-container */
     display: none;
 }
-.bold-font{
+.bold-font-large{
     font-size: large;
     font-weight: bold;
+}
+.bold-font-medium{
+    font-size: medium;
+    font-weight: bold;
+}
+.text-align-center{
+    text-align: center;
+}
+.item-align-center{
+    align-items: center;
 }
 .flex-fill{
     flex : 1;
@@ -189,7 +201,6 @@ body{
 }
 #account{
     border: 2.5px solid black;
-    display: none;
     flex-direction: column;
     background-color:rgb(248, 239, 210);
 }
@@ -239,6 +250,12 @@ body{
     margin-top: 2%;
     justify-content: space-between;
     align-items: center;
+}
+#modal-header button{
+    margin-right : 2.5%;
+    margin-bottom: 1%;
+    border: none;
+    font-weight: bold;
 }
 #modal-title{
     font-size: 140%;

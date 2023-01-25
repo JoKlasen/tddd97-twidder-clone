@@ -32,7 +32,6 @@ function loadPersonalInfo(userEmail = null){
         let current_paras = parasContainer[j].children;
 
         current_paras[0].innerText = key;
-        current_paras[0].style = "font-weight: bold;";
         current_paras[1].innerText = info[key];
         
         j++;
@@ -82,10 +81,18 @@ function loadMessages(email = null){
 }
 
 function sendMessage(formElement, event){    
-    let token = getCookie();
+    let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
     let toEmail = null;
     toEmail = window.localStorage.getItem('currently_viewed_profile');
+
+    if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
+        let modalBody = ['You have not chosen any user to browse yet.'];
+        let modalTitle = 'Error: couldn\'t send message';
+        showModal('profile-section', modalBody, modalTitle);
+        event.preventDefault();
+        return;
+    }
 
     if (toEmail == null){
         toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;

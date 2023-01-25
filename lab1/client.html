@@ -104,9 +104,7 @@
                     
                     <!-- Display own info -->
                     <div id="home-info-box" class="info-box flex-column-container">
-                        <p style="  font-size: medium;
-                                    font-weight: bold;"
-                        >
+                        <p class="bold-font-medium">
                             Personal info
                         </p>
                         
@@ -144,29 +142,20 @@
                     
                         </div>
 
-                        <!-- <div id="home-send-messages" class="send-messages flex-row-container">   
-                            <textarea id="home-send-message-text" class="send-message-text"></textarea>
-                            <div class="flex-column-container flex-fill">
-                                <button id="home-send-message-button" class="button-style flex-fill" onclick="sendMessage(this)" > Send </button>     
-                                <button id="home-refresh-messages" class="bold-font button-style" onclick="loadMessages()"> &#8635; </button>
-                            </div>
-                        </div>     -->
                         <form action="" onsubmit="sendMessage(this, event)" id="home-send-messages" class="send-messages flex-row-container">
                             <textarea id="home-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="home-send-message-button" class="button-style flex-fill" value="Send" type="submit">    
-                                <button id="home-refresh-messages" class="bold-font button-style" onclick="loadMessages()" type="button"> &#8635; </button> <!-- att ge knappen type="button" förhindrar den att submitta formen -->
+                                <button id="home-refresh-messages" class="bold-font-large button-style" onclick="loadMessages()" type="button"> &#8635; </button> <!-- att ge knappen type="button" förhindrar den att submitta formen -->
                             </div>
                         </form>
                     </div>
                 </div>
             
                 <!-- Browse tab -->
-                <div id="browse" class="max-dimensions flex-row-container" style="display: none">
+                <div id="browse" class="max-dimensions flex-row-container hide">
                     <div id="browse-info-box" class="info-box flex-column-container">
-                        <p style="  font-size: medium;
-                                    font-weight: bold;"
-                        >
+                        <p class="bold-font-medium">
                             Personal info
                         </p>
                         <div id="browse-user-info" class="info-pair-container flex-column-container">
@@ -216,16 +205,16 @@
                             <textarea id="browse-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="browse-send-message-button" class="button-style flex-fill" value="Send" type="submit">     
-                                <button id="browse-refresh-messages" class="bold-font button-style" onclick="loadMessagesFromBrowse()" type="button"> &#8635; </button>
+                                <button id="browse-refresh-messages" class="bold-font-large button-style" onclick="loadMessagesFromBrowse()" type="button"> &#8635; </button>
                             </div>
                         </form>
                     </div>
                 </div>
             
                 <!-- Account tab -->
-                <div id="account" class="max-dimensions">
+                <div id="account" class="max-dimensions hide">
                     <form id="password-change-form" action="" onsubmit="validatePasswordChange(event)">
-                        <p id="new-password-message" style="text-align: center;"> Change password</p>
+                        <p id="new-password-message" class="text-align-center"> Change password</p>
                         <div class="label-input-pair flex-row-container"> 
                             <label for="password-old" class="label">Old password</label>
                             <input type="password" id="password-old" class="input" required>
@@ -238,7 +227,7 @@
                             <label for="password-new-again" class="label">New password again</label>
                             <input type="password" id="password-new-again" class="input" required>
                         </div>
-                        <div style="align-items: center;" class="flex-row-container">
+                        <div class="item-align-center" class="flex-row-container">
                             <input class="center-submit" type="submit" value="Enter"> 
                         </div> 
                     </form>
@@ -260,7 +249,7 @@
         </script>
         <!-- /Profile view -->
 
-        <div id="profile-tabs-header-template" style="display : none;">
+        <div id="profile-tabs-header-template" class="hide">
             <a href="" onclick="toHome(event)" class="link-tab"> Home </a>
             <a href="" onclick="toBrowse(event)" class="link-tab"> Browse </a>
             <a href="" onclick="toAccount(event)" class="link-tab"> Account </a>
@@ -270,7 +259,7 @@
         <script src="serverstub.js" type="text/javascript"></script>
 
     </head>
-    <body style="background-image: url('pinto_ensvensktiger.JPEG'); font-family: 'Courier New', Courier, monospace;">        
+    <body   >        
         <!-- Not logged in -->
         <div id="welcome-section" class="container-section">
             
@@ -287,11 +276,7 @@
         <div id="error-modal" class="modal flex-column-container">
             <div id="modal-header" class="flex-row-container">
                 <div id="modal-title"></div>
-                <button id="modal-close-button"
-                        style=" margin-right : 2.5%;
-                                margin-bottom: 1%;
-                                border: none;
-                                font-weight: bold;"> 
+                <button id="modal-close-button"> 
                     X 
                 </button>
             </div>
