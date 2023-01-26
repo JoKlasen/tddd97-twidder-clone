@@ -1,0 +1,2 @@
+def testFun():
+    return True
