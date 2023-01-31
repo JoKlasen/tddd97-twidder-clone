@@ -1,5 +1,6 @@
 CREATE TABLE users (
     email VARCHAR(30) PRIMARY KEY,
+    pass VARCHAR(30),
     firstName VARCHAR(30),
     surName VARCHAR(30),
     gender VARCHAR(10),
@@ -13,38 +14,45 @@ CREATE TABLE messages (
     fromEmail VARCHAR(30),
     content VARCHAR(300),
 
-    CONSTRAINT PRIMARY KEY (email, messageNo),
-    CONSTRAINT FOREIGN KEY (email) REFERENCES users(email)
+    PRIMARY KEY (email, messageNo),
+    FOREIGN KEY (email) REFERENCES users(email)
 );
 
 CREATE TABLE loggedInUsers (
     token VARCHAR(36),
     email VARCHAR(30) PRIMARY KEY,
 
-    CONSTRAINT FOREIGN KEY (email) REFERENCES users(email)
+    FOREIGN KEY (email) REFERENCES users(email)
 );
 
-CREATE TABLE shadow (
-    email VARCHAR(30) PRIMARY KEY,
-    pass VARCHAR(30),
 
-    CONSTRAINT FOREIGN KEY (email) REFERENCES users(email)
-)
+INSERT INTO users VALUES
+('test@test.test', 'test' , 'test', 'test', 'Male', 'test', 'test'),
+('johan@me.se', 'pass123', 'Johan', 'Klasén', 'Male', 'Linköping', 'Sweden'),
+('wilvo@me.se', 'asd123', 'Wilhelm', 'von Kantzow', 'Male', 'Linköping', 'Sweden'),
+('bo@bob.com', 'volvo240', 'Bo', 'Bosson', 'Other', 'Byboda', 'Svärje');
 
-INSERT INTO user VALUES
-('test@test.test', 'test', 'test', 'Male', 'test', 'test',),
-('johan@me.se', 'Johan', 'Klasén', 'Male', 'Linköping', 'Sweden'),
-('wilvo@me.se', 'Wilhelm', 'von Kantzow', 'Male', 'Linköping', 'Sweden'),
-('bo@bob.com', 'Bo', 'Bosson', 'Other', 'Byboda', 'Svärje');
 
-INSERT INTO shadow VALUES
-('test@test.test', 'test'),
-('johan@me.se', 'pass123'),
-('wilvo@me.se', 'asd123'),
-('bo@bob.com', 'volvo240');
 
 INSERT INTO messages VALUES
 ('johan@me.se', 0, 'johan@me.se', 'First!'),
-('test@test.test', 0, 'test@test.test', 'test')
+('test@test.test', 0, 'test@test.test', 'test'),
 ('wilvo@me.se', 0, 'johan@me.se', 'Tja fan!'),
 ('johan@me.se', 1, 'wilvo@me.se', 'Hej kompis!');
+
+
+
+
+
+-- CREATE TABLE shadow (
+--     email VARCHAR(30) PRIMARY KEY,
+--     pass VARCHAR(30),
+
+--     FOREIGN KEY (email) REFERENCES users(email)
+-- );
+
+-- INSERT INTO shadow VALUES
+-- ('test@test.test', 'test'),
+-- ('johan@me.se', 'pass123'),
+-- ('wilvo@me.se', 'asd123'),
+-- ('bo@bob.com', 'volvo240');
