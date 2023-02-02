@@ -19,8 +19,8 @@ CREATE TABLE messages (
 );
 
 CREATE TABLE loggedInUsers (
-    token VARCHAR(36),
     email VARCHAR(30) PRIMARY KEY,
+    token VARCHAR(36),
 
     FOREIGN KEY (email) REFERENCES users(email)
 );
