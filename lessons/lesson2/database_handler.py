@@ -23,7 +23,7 @@ def get_contact(name):
         cursor = get_db().execute('select * from contact where name like ?', [name])
         matches = cursor.fetchall()
         cursor.close()
-        
+
         result = []
         for index in range(len(matches)):
             result.append({'name' : matches[index][0], 'number' : matches[index][1]})

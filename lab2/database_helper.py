@@ -38,6 +38,12 @@ def execute_and_commit(query, columns):
 # _________Database/Server Interface_________
 def add_user(data):
     try:
+        match = select_one_match("SELECT email from user WHERE email LIKE ?", [data['email']])
+
+        # User all ready exists
+        if match is not None:
+            return '', 409
+
         execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
                                                                                 data['familyname'], data['gender'], data['city'],    
                                                                                 data['country'] ])
@@ -46,9 +52,10 @@ def add_user(data):
         #                 data['familyname'], data['gender'], data['city'],    \
         #                 data['country'] ])
         # get_db().commit()
-        return '', 200
-    except:
-        return '', 409
+        return '', 201
+    except Exception as e:
+        print(e)
+        return '', 400
 
 def sign_in_user(email, password):
 
@@ -68,8 +75,41 @@ def sign_in_user(email, password):
             execute_and_commit("UPDATE loggedInUsers SET token = ? WHERE email = ?", [token, email])
         
     except Exception as e:
+        print(e)
         return '', 400
 
-    return token, 200
+    return token, 200 # Skilja på insert/update?
+
+def sign_out_user(token):
+    user = validate_token(token)
+    print(user)
+
+    if user is None:
+        return '', 403
+    
+    try:
+        execute_and_commit("DELETE FROM loggedInUsers WHERE email LIKE ?", [user]) # eller LIKE token
+
+    except Exception as e:
+        print(e)
+        return '', 400 # ?? Möjliga felscenarion?
+
+    return '', 204 # eller bara 200?
+
+def validate_token(token):
+    match = select_one_match("SELECT email FROM loggedInUsers WHERE token LIKE ?", [token])
+
+    print(match)
+    print(type(match))
+
+    # if match is None:
+    #     return '', 403
+    # else:
+        # return match[1], 200
+
+    if match is None:
+        return None
+    else:
+        return match[0]
 
 # _________Database/Server Interface_________

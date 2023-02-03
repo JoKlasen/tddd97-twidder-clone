@@ -33,6 +33,15 @@ def sign_in():
     
     return "<p>Something else!</p>"
 
+@app.route("/sign_out", methods = ['DELETE']) # Är detta rätt metod?
+def sign_out():
+    token = request.headers.get('Authorization')
+    print(request.headers)
+    print(token)
+
+    result = db.sign_out_user(token)
+
+    return result
 
 if __name__ == '__main__':
     app.debug = True
