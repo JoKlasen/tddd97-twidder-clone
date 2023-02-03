@@ -45,43 +45,57 @@ def sign_out():
 
 @app.route("/change_password", methods = ['PUT'])
 def change_password():
-    token = request.headers.get['Authorization']
+    token = request.headers.get('Authorization')
     data = request.get_json()
-    user = db.validate_token(token)
+
+    result = db.change_user_password(token, data)
+
+    return result
+
+@app.route("/get_user_data_by_token", methods = ['GET'])
+def get_user_data_by_token():
+    token = request.headers.get('Authorization')
+    user = db.validate_token_and_get_user(token)
 
     if user is None:
         return '', 401
 
-    if data is None or not (hf.is_within_range(data['newPassword'])):
-        return '', 400
-
-    result = db.change_user_password(user, data['oldPassword'], data['newPassword'])
-
+    result = db.get_user_data(user)    
     return result
 
+
+@app.route("/get_user_data_by_email/<email>", methods = ['GET'])
+def get_user_data_by_email(email):
+    if not hf.is_valid_email(email):
+        return '', 400
+        
+    result = db.get_user_data(email)
+    return result
+
+@app.route("/get_user_messages_by_token", methods = ['GET'])
+def get_user_messages_by_token():
+    token = request.headers.get('Authorization')
+    user = db.validate_token_and_get_user(token)
+
+    if user is None:
+        return '', 401
+
+    result = db.get_messages(user)
+    return result
+
+@app.route("/get_user_messages_by_email/<email>", methods = ['GET'])
+def get_user_messages_by_email(email):
+    token = request.headers.get('Authorization')
+    user = db.validate_token_and_get_user(token)
+
+    if user is None:
+        return '', 401
+    if not hf.is_valid_email(email):
+        return '', 400
+
+    result = db.get_messages(email)
+    return result
 
 if __name__ == '__main__':
     app.debug = True
     app.run()
-
-
-
-
-
-
-
-
-# @app.route("/")
-# def hello_world():
-#     if (db.testFun()):
-#         return "<p>Hello, Campus!</p>"
-#     else:
-#         return "Error"
-
-# @app.route("/db_test")
-# def dbTest():
-#     result = c.execute('''CREATE TABLE stocks
-#                         (date text, trans text, symbol text, qty real, price real)''')
-#     conn.commit()
-#     print(db.testFun())
-#     return result

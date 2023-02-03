@@ -123,7 +123,7 @@ function toTab(toTabName){
 
 function colorAnchor(anchorID, color){
     let currentAnchor = document.getElementById(anchorID);
-    currentAnchor.style.color = color;
+    currentAnchor.style.color = color;          // toggleClass istället
 }
 
 function signOut(event){

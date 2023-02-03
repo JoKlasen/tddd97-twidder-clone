@@ -65,3 +65,8 @@ def generate_token():
     for i in range(36):
         token += random.choice(letters)
     return token
+
+
+def print_except(e):
+    print("Något gick snett till :/")
+    print(e)
