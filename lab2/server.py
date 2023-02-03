@@ -31,7 +31,7 @@ def sign_in():
         result = db.sign_in_user(data['email'], data['password'])
         return result
     
-    return "<p>Something else!</p>"
+    return '', 400
 
 @app.route("/sign_out", methods = ['DELETE']) # Är detta rätt metod?
 def sign_out():
@@ -42,6 +42,23 @@ def sign_out():
     result = db.sign_out_user(token)
 
     return result
+
+@app.route("/change_password", methods = ['PUT'])
+def change_password():
+    token = request.headers.get['Authorization']
+    data = request.get_json()
+    user = db.validate_token(token)
+
+    if user is None:
+        return '', 401
+
+    if data is None or not (hf.is_within_range(data['newPassword'])):
+        return '', 400
+
+    result = db.change_user_password(user, data['oldPassword'], data['newPassword'])
+
+    return result
+
 
 if __name__ == '__main__':
     app.debug = True

@@ -78,14 +78,14 @@ def sign_in_user(email, password):
         print(e)
         return '', 400
 
-    return token, 200 # Skilja på insert/update?
+    return token, 200 # /201 Skilja på insert/update?
 
 def sign_out_user(token):
     user = validate_token(token)
     print(user)
 
     if user is None:
-        return '', 403
+        return '', 401
     
     try:
         execute_and_commit("DELETE FROM loggedInUsers WHERE email LIKE ?", [user]) # eller LIKE token
@@ -96,6 +96,23 @@ def sign_out_user(token):
 
     return '', 204 # eller bara 200?
 
+def change_user_password(user, oldPassword, newPassword):
+
+    match = select_one_match("SELECT pass FROM users WHERE pass LIKE ?")
+
+    if match is None:
+        return '', 401 # eller 403? Fel oldPassword
+
+    try:
+        execute_and_commit("UPDATE users SET pass = ? WHERE email LIKE ?" [newPassword, user])
+
+    except Exception as e:
+        print(e)
+        return '', 400 # ?? Möjliga felscenarion?
+
+    return '', 200
+
+
 def validate_token(token):
     match = select_one_match("SELECT email FROM loggedInUsers WHERE token LIKE ?", [token])
 
@@ -105,7 +122,7 @@ def validate_token(token):
     # if match is None:
     #     return '', 403
     # else:
-        # return match[1], 200
+        # return match[0], 200
 
     if match is None:
         return None
