@@ -1,30 +1,29 @@
 CREATE TABLE users (
-    email VARCHAR(30) PRIMARY KEY,
-    pass VARCHAR(30),
-    firstName VARCHAR(30),
-    surName VARCHAR(30),
-    gender VARCHAR(10),
-    city VARCHAR(30),
-    country VARCHAR(30)
+    email TEXT PRIMARY KEY,
+    pass TEXT,
+    firstName TEXT,
+    surName TEXT,
+    gender TEXT,
+    city TEXT,
+    country TEXT
 );
 
 CREATE TABLE messages (
-    email VARCHAR(30),
-    messageNo INTEGER AUTOINCREMENT,
-    fromEmail VARCHAR(30),
-    content VARCHAR(300),
+    messageNo INTEGER PRIMARY KEY AUTOINCREMENT,    -- Var tvungen att ha "PRIMARY KEY" innan för att AUTOINCREMENT ska funka
+    email TEXT,                             
+    fromEmail TEXT,
+    content TEXT,
 
-    PRIMARY KEY (email, messageNo),
+    -- PRIMARY KEY (email, messageNo),
     FOREIGN KEY (email) REFERENCES users(email)
 );
 
 CREATE TABLE loggedInUsers (
-    email VARCHAR(30) PRIMARY KEY,
-    token VARCHAR(36),
+    email TEXT PRIMARY KEY,
+    token TEXT,
 
     FOREIGN KEY (email) REFERENCES users(email)
 );
-
 
 INSERT INTO users VALUES
 ('test@test.test', 'test' , 'test', 'test', 'Male', 'test', 'test'),
@@ -33,21 +32,12 @@ INSERT INTO users VALUES
 ('bo@bob.com', 'volvo240', 'Bo', 'Bosson', 'Other', 'Byboda', 'Svärje');
 
 
-
+-- Måste stå "null" på AUTOINCREMENT kolumnen..
 INSERT INTO messages VALUES
-('johan@me.se', 0, 'johan@me.se', 'First!'),
-('test@test.test', 1, 'test@test.test', 'test'),
-('wilvo@me.se', 2, 'johan@me.se', 'Tja fan!'),
-('johan@me.se', 3, 'wilvo@me.se', 'Hej kompis!');
-
--- Uncomment and remove above when running restart_db next time
--- INSERT INTO messages VALUES
--- ('johan@me.se', 'johan@me.se', 'First!'),
--- ('test@test.test', 'test@test.test', 'test'),
--- ('wilvo@me.se', 'johan@me.se', 'Tja fan!'),
--- ('johan@me.se', 'wilvo@me.se', 'Hej kompis!');
-
-
+(null, 'johan@me.se', 'johan@me.se', 'First!'),
+(null, 'test@test.test', 'test@test.test', 'test'),
+(null, 'wilvo@me.se', 'johan@me.se', 'Tja fan!'),
+(null, 'johan@me.se', 'wilvo@me.se', 'Hej kompis!');
 
 
 

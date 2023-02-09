@@ -42,6 +42,21 @@ def execute_and_commit(query, columns):
 
 
 # _________Database/Server Interface_________
+def post_message(data, fromEmail):
+    toEmail = data['email']
+    message = data['message']
+    print( "to email: {}".format(toEmail) )
+    print( "from email: {}".format(fromEmail) )
+    print( "message: {}".format(message) )
+
+    try:
+        execute_and_commit("INSERT INTO messages values (?, ?, ?, ?)", [None, toEmail, fromEmail, message])
+    except Exception as e:
+        hf.print_except(e)
+
+    return '', 200
+
+
 def get_messages(email):
     try:
         match = select_one_match("SELECT * FROM users WHERE email = ?", [email])
@@ -50,21 +65,18 @@ def get_messages(email):
             return '', 400
 
         matches = select_all_matches("SELECT * FROM messages WHERE email LIKE ?", [email])
-        print("matches: ")
-        print(matches)
         
         result = []
         for tuple in matches:
             result.append( 
                             {
-                                'email' : tuple[0],
-                                'messageNo' : tuple[1],
+                                'messageNo' : tuple[0],
+                                'email' : tuple[1],
                                 'fromEmail' : tuple[2],
                                 'content' : tuple[3]
                             }
                          )
-        print("result!")
-        print(result)
+                         
     except Exception as e:
         hf.print_except(e)
         return '', 400
@@ -105,10 +117,11 @@ def add_user(data):
         execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
                                                                                 data['familyname'], data['gender'], data['city'],    
                                                                                 data['country'] ])
-        return '', 201
     except Exception as e:
         hf.print_except(e)
         return '', 400
+    
+    return '', 201
 
 def sign_in_user(email, password):
 
@@ -135,7 +148,6 @@ def sign_in_user(email, password):
 
 def sign_out_user(token):
     user = validate_token_and_get_user(token)
-    print(user)
 
     if user is None:
         return '', 401
@@ -166,7 +178,6 @@ def change_user_password(token, data):
 
     try:
         execute_and_commit("UPDATE users SET pass = ? WHERE email LIKE ?", [data['newPassword'], user])
-
     except Exception as e:
         hf.print_except(e)
         return '', 400 # ?? Möjliga felscenarion?
