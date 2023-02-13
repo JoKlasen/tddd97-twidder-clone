@@ -15,10 +15,7 @@ COUNTRY_MIN_LEN = 1
 COUNTRY_MAX_LEN = 100
 
 def is_valid_email(email):
-    if re.fullmatch(email_regex, email):
-        return True
-    else:
-        return False
+    return re.fullmatch(email_regex, email)
 
 def is_within_range(data, min, max):
     return len(data) >= min and len(data) <= max

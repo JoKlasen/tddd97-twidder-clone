@@ -45,16 +45,22 @@ def execute_and_commit(query, columns):
 def post_message(data, fromEmail):
     toEmail = data['email']
     message = data['message']
-    print( "to email: {}".format(toEmail) )
-    print( "from email: {}".format(fromEmail) )
-    print( "message: {}".format(message) )
+
+    if not hf.is_within_range(message, 1, 400):
+        return 'Message either empty or too long', 400
 
     try:
+        match = select_one_match("SELECT * FROM users WHERE email = ?", [toEmail])
+        
+        if match is None:
+            return 'Not posting to a valid user', 400
+
         execute_and_commit("INSERT INTO messages values (?, ?, ?, ?)", [None, toEmail, fromEmail, message])
     except Exception as e:
         hf.print_except(e)
+        return '', 500
 
-    return '', 200
+    return '', 201
 
 
 def get_messages(email):
@@ -62,7 +68,7 @@ def get_messages(email):
         match = select_one_match("SELECT * FROM users WHERE email = ?", [email])
         
         if match is None:
-            return '', 400
+            return 'Invalid email', 400
 
         matches = select_all_matches("SELECT * FROM messages WHERE email LIKE ?", [email])
         
@@ -79,7 +85,7 @@ def get_messages(email):
                          
     except Exception as e:
         hf.print_except(e)
-        return '', 400
+        return '', 500
         
     return jsonify(result), 200
 
@@ -88,7 +94,7 @@ def get_user_data(email):
         match = select_one_match("SELECT * FROM users WHERE email = ?", [email])
         
         if match is None:
-            return '', 400
+            return 'Invalid email', 400
         
         # Excluding password
         result =    {
@@ -102,7 +108,7 @@ def get_user_data(email):
 
     except Exception as e:
         hf.print_except(e)
-        return '', 400
+        return '', 500
 
     return jsonify(result)  # jsonify sorts the keys in alphabetic order probably
 
@@ -112,16 +118,16 @@ def add_user(data):
 
         # User all ready exists
         if match is not None:
-            return '', 409
+            return 'User already exists', 409
 
         execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
                                                                                 data['familyname'], data['gender'], data['city'],    
                                                                                 data['country'] ])
     except Exception as e:
         hf.print_except(e)
-        return '', 400
+        return '', 500
     
-    return '', 201
+    return '', 201      
 
 def sign_in_user(email, password):
 
@@ -129,7 +135,7 @@ def sign_in_user(email, password):
         match = select_one_match("SELECT email, pass FROM users WHERE email LIKE ? AND pass LIKE ?", [email, password])
 
         if match is None:
-            return '', 400
+            return 'Invalid email and/or password', 400
 
         token = hf.generate_token()
 
@@ -140,47 +146,49 @@ def sign_in_user(email, password):
         else:
             execute_and_commit("UPDATE loggedInUsers SET token = ? WHERE email = ?", [token, email])
         
+        result = {"token" : token}
+
     except Exception as e:
         hf.print_except(e)
-        return '', 400
+        return '', 500
 
-    return token, 200 # /201 Skilja på insert/update?
+    return jsonify(result)
 
 def sign_out_user(token):
     user = validate_token_and_get_user(token)
 
     if user is None:
-        return '', 401
+        return 'Invalid token', 401
     
     try:
-        execute_and_commit("DELETE FROM loggedInUsers WHERE email LIKE ?", [user]) # eller LIKE token
+        execute_and_commit("DELETE FROM loggedInUsers WHERE email LIKE ?", [user])
 
     except Exception as e:
         hf.print_except(e)
-        return '', 400 # ?? Möjliga felscenarion?
+        return '', 500
 
-    return '', 204 # eller bara 200?
+    return '', 200 
 
 def change_user_password(token, data):
 
     user = validate_token_and_get_user(token)
 
     if user is None:
-        return '', 401
+        return 'Invalid token', 401
 
     if data is None or not (hf.is_within_range(data['newPassword'], hf.PSW_MIN_LEN, hf.PSW_MAX_LEN)):
-        return '', 400
+        return 'Password too short or too long', 400
 
     match = select_one_match("SELECT pass FROM users WHERE pass LIKE ?", [data['oldPassword']])
 
     if match is None:
-        return '', 401 # eller 403? Fel oldPassword
+        return 'Wrong old password', 403
 
     try:
         execute_and_commit("UPDATE users SET pass = ? WHERE email LIKE ?", [data['newPassword'], user])
     except Exception as e:
         hf.print_except(e)
-        return '', 400 # ?? Möjliga felscenarion?
+        return '', 500 
 
     return '', 200
 
