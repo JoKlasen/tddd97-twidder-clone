@@ -386,9 +386,11 @@ function validateSignIn(event){
 }
 
 function validateSignUp(formElement, event){
-    let genderSelect = document.getElementById("gender-input");
-    let password = document.getElementById("password-new");
-    let passwordRepeat = document.getElementById("password-repeat");
+
+    
+    let genderSelect = formElement["gender-input"];
+    let password = formElement["password-new"];
+    let passwordRepeat = formElement["password-repeat"];
     
     let modalTitle = "Some info is missing";
     if (genderSelect.value == "NO_CHOICE"){
@@ -435,11 +437,11 @@ function validateSignUp(formElement, event){
     
     request.onreadystatechange =  function(){
         if (request.readyState == 4){
-            let modalBody = '';
+            let modalBody = [];
             let modalTitle = '';
             if (request.status == 201){
-                modalBody = 'Successfully created a new user.';
-                modalTitle = 'Success';
+                modalBody = ['Successfully created new user.'];
+                modalTitle = 'Sign up OK';
                 
                 formElement.reset();
 
@@ -451,8 +453,8 @@ function validateSignUp(formElement, event){
                 document.getElementById("city").value = '';
                 document.getElementById("country").value = '';
             } else {
-                modalBody = request.responseText;
-                modalTitle = 'fail';
+                modalBody = [request.responseText];
+                modalTitle = 'Sign up failed';
 
             }
             
