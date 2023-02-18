@@ -1,3 +1,31 @@
+// console.table                   <-- skriv ut arrayer och object
+// console.dir                     <-- skriv ut html element objektet
+// console.time / console.timeEnd
+// console.error                   <-- ?
+
+
+// Testa hur async/await/promise funkar
+// async function testAsync(){
+//     return new Promise(function(resolve, reject){
+//         let a = 1 + 1
+//         if (a === 3){
+//             resolve("User data!")
+//         } else {
+//             reject("fail :(")
+//         }
+//     })
+// }
+
+// async function wrapper(){
+//     try{
+//         let e = await testAsync();
+//         console.log(e)    
+//     } catch(err){
+//         console.log(err)
+//     }
+// }
+
+
 // ---------------- SERVER INTERFACE ---------------- 
 
 function initiateXHR(method, url) {
@@ -11,33 +39,106 @@ function initiateXHR(method, url) {
     }
 }
 
+async function getActiveUser(){
+    return new Promise( function(resolve, reject){
+        
+            let token = getToken();
+            let userData = {};
+            let request = initiateXHR("GET", "/get_user_data_by_token");
+            request.setRequestHeader("Authorization", token);
+            request.send();
+        
+            request.onreadystatechange =  function(){
+                if (request.readyState == 4){
+        
+                    if (request.status == 200){
+                        userData = JSON.parse( request.responseText ); 
+                        userData['success'] = true;
+                        resolve(userData)
+                    }else {
+                        userData['success'] = false;
+                        reject(userData)
+                    }
+                }
+            }
+    } );
+}
 
+async function getUserMessagesByEmail(token, email){
+    return new Promise(function(resolve, reject){
+        let request = initiateXHR('GET', '/get_user_messages_by_email/' + email)
+        request.setRequestHeader('Authorization', token)
+        request.send()
+
+        request.onreadystatechange = function() {
+            if (request.readyState !== 4){
+                return
+            }
+
+            if (request.status == 200){
+                let body = JSON.parse( request.responseText )
+                resolve(body)
+                
+            } else {
+                reject(request.responseText)
+            }
+        }
+
+    });
+}
+
+async function getUserMessagesByToken(token){
+    return new Promise(function(resolve, reject){
+
+    });
+}
+
+async function getUserDataByEmail(email, token){
+    return new Promise(function(resolve, reject){
+        let request = initiateXHR('GET', '/get_user_data_by_email/' + email)
+        request.setRequestHeader("Authorization", token)
+        request.send()
+
+        request.onreadystatechange =  function(){
+            if (request.readyState == 4){
+                let body = {}
+                if (request.status == 200){
+                    body = JSON.parse( request.responseText )
+                    window.localStorage.setItem('currently_viewed_profile', email)
+                    resolve(body)
+
+                }else{
+                    body['message'] = request.responseText
+                    reject(body)
+                }
+            }
+        }
+    });
+}
 // ---------------- /SERVER INTERFACE ---------------- 
+
 
 // ---------------- Profile functions ----------------
 let CURRENT_PROFILE_TAB = 'home';
 
-function loadPersonalInfo(userEmail = null){
 
-    let info = '';
+async function loadPersonalInfo(userEmail = null){
+
+    let info = {}    
     if (userEmail === null){
-
-        info = JSON.parse( window.localStorage.getItem('active_user') );
-    }
-    else{
-        let token = getToken();
-        let userData = serverstub.getUserDataByEmail(token, userEmail);
-        if (!userData.success){
-            let modalBody = [userData.message];
+        info = JSON.parse( window.localStorage.getItem('active_user') )
+    } else {
+        let token = getToken()
+        try{
+            info = await getUserDataByEmail(userEmail, token) 
+        } catch(err){
+            let modalBody = [err.message];
             let modalTitle = 'User doesn\'t exist :(';
             showModal('profile-section', modalBody, modalTitle);
-            return;
+            return
         }
-        else{
-            window.localStorage.setItem('currently_viewed_profile', userEmail);
-        }
-        info = userData.data;
     }
+
 
     let personalInfoContainer = document.getElementById(CURRENT_PROFILE_TAB + '-user-info');
     let parasContainer = personalInfoContainer.children;
@@ -68,31 +169,39 @@ function loadMessagesFromBrowse(){
     }
 }
 
-function loadMessages(email = null){
+async function loadMessages(email = null){
     let token = getToken();
     let userMessages = '';
-    if (email === null){
-        userMessages = serverstub.getUserMessagesByToken(token);
+    try{
+        if (email === null){
+            userMessages = await getUserMessagesByToken(token);
+        }
+        else{
+            userMessages = await getUserMessagesByEmail(token, email);
+        }
+    } catch(err){
+        console.error("Working as intended?: " + err)
+        return
     }
-    else{
-        userMessages = serverstub.getUserMessagesByEmail(token, email);
-    }
-    let messageData = userMessages.data;
+
+    console.table(userMessages)
+
     let templateMessageBox = document.getElementById("template-message-box");
     let messageContainer = document.getElementById(CURRENT_PROFILE_TAB + '-posted-messages');
 
     clearChildren(messageContainer);
     
-    for(let key in messageData){
+    for (let i = 0; i < userMessages.length; ++i){
         let currentMessageBox = templateMessageBox.cloneNode(true);
-        currentMessageBox.setAttribute("id", "message-box-"+key);
-
+        currentMessageBox.setAttribute("id", "message-box-" + i);
+        
         let paras = currentMessageBox.children;
-        paras[0].innerHTML = messageData[key].writer;
-        paras[1].innerHTML = messageData[key].content;
-
+        paras[0].innerHTML = userMessages[i].fromEmail;
+        paras[1].innerHTML = userMessages[i].content;
+        
         currentMessageBox.classList.remove("hide");
         messageContainer.appendChild(currentMessageBox);
+
     }
 }
 
@@ -142,6 +251,7 @@ function colorAnchor(anchorID, color){
     currentAnchor.style.color = color;          // toggleClass istället
 }
 
+// TODO: Meddela server att vi loggar ut
 function signOut(event){
     colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
     CURRENT_PROFILE_TAB = 'home';
@@ -265,11 +375,7 @@ function deleteUser(user){
     window.localStorage.removeItem(user);
 }
 
-function getActiveUser(){
-    let token = getToken();
-    let userData = serverstub.getUserDataByToken(token);
-    return userData;
-}
+
 function putDotsBetweenElements(elementName){
     let wrapperDivs = document.getElementsByClassName(elementName);
     
@@ -305,7 +411,7 @@ let displayNotLoggedin = function() {
     putDotsBetweenElements("label-input-pair");
 }
 
-let displayLoggedin = function() {
+let displayLoggedin = async function() {
     hideOtherViews(['welcome-section']);
 
     let container = document.getElementById('profile-view-container');
@@ -352,9 +458,6 @@ function validateSignIn(event){
                     password : passwordInput.value
                  } 
 
-    console.log("body")
-    console.log(body)
-
     let request = initiateXHR("POST", "/sign_in");
     request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     request.send(JSON.stringify(body));
@@ -387,7 +490,6 @@ function validateSignIn(event){
 
 function validateSignUp(formElement, event){
 
-    
     let genderSelect = formElement["gender-input"];
     let password = formElement["password-new"];
     let passwordRepeat = formElement["password-repeat"];
@@ -492,13 +594,20 @@ function validateSignUp(formElement, event){
 //     window.localStorage.removeItem('sign-up-message'); 
 // }
 
-function displayView(){
-    console.log("Hit kom vi!");
-    let userData = getActiveUser();
-    let loggedIn = userData.success; 
-    
+async function displayView(){
+    let userData = {}
+    let loggedIn = false
+    try{
+        userData = await getActiveUser()
+        loggedIn = userData.success
+    } catch(err){
+        console.error("Working as intended?: " + err)
+        return
+    }
+        
     if (loggedIn){
-        saveUser(userData.data);
+        delete userData['success']
+        saveUser(userData);
         displayLoggedin();
     } else{
         displayNotLoggedin();
@@ -507,7 +616,7 @@ function displayView(){
 
 // ---------------- /Welcome functions ----------------
 
-window.onload = function(){
+window.onload = async function(){
     console.log("page has been loaded");
     displayView();
     // checkSignUpStatus();

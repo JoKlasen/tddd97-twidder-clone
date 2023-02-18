@@ -110,7 +110,7 @@ def get_user_data(email):
         hf.print_except(e)
         return 'Internal server error', 500
 
-    return jsonify(result)  # jsonify sorts the keys in alphabetic order probably
+    return jsonify(result)  
 
 def add_user(data):
     try:
