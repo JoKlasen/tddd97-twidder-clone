@@ -26,6 +26,24 @@
 // }
 
 
+
+// "arrow function", "(param1,param2)", "=>" inget särskilt, "{kod i funktionen}""
+// request.onreadystatechange = () => {
+//     getMessagesReadyState(request, resolve, reject);
+// }
+
+// Detta är strikt taget inte samma sak. Skillnad ligger i "this" <-- Läs på?
+// request.onreadystatechange = function() {
+//     getMessagesReadyState(request, resolve, reject);
+// }
+
+// Det nedan fungerar inte eftersom det är ett anrop till "getMessagesReadyState",
+// varför det måste wrappas i en funktiondeklaration.^ 
+//
+// request.onreadystatechange = getMessagesReadyState(request, resolve, reject);
+//
+
+
 // ---------------- SERVER INTERFACE ---------------- 
 
 function initiateXHR(method, url) {
@@ -63,33 +81,43 @@ async function getActiveUser(){
             }
     } );
 }
+function getMessagesReadyState(request, resolve, reject){
+    if (request.readyState !== 4){
+        return
+    }
+
+    if (request.status == 200){
+        let body = JSON.parse( request.responseText )
+        resolve(body)
+        
+    } else {
+        reject(request.responseText)
+    }
+}
 
 async function getUserMessagesByEmail(token, email){
-    return new Promise(function(resolve, reject){
+    return new Promise( (resolve, reject) => {
         let request = initiateXHR('GET', '/get_user_messages_by_email/' + email)
         request.setRequestHeader('Authorization', token)
         request.send()
 
-        request.onreadystatechange = function() {
-            if (request.readyState !== 4){
-                return
-            }
-
-            if (request.status == 200){
-                let body = JSON.parse( request.responseText )
-                resolve(body)
-                
-            } else {
-                reject(request.responseText)
-            }
+        // tilldelar onreadystatechange en "arrow function" som wrappar
+        // "getMessagesReadState"
+        request.onreadystatechange = () => {
+            getMessagesReadyState(request, resolve, reject );
         }
-
     });
 }
 
 async function getUserMessagesByToken(token){
     return new Promise(function(resolve, reject){
+        let request = initiateXHR("GET", '/get_user_messages_by_token')
+        request.setRequestHeader('Authorization', token)
+        request.send()
 
+        request.onreadystatechange = () => {
+            getMessagesReadyState(request, resolve, reject)
+        }
     });
 }
 
@@ -112,6 +140,52 @@ async function getUserDataByEmail(email, token){
                     reject(body)
                 }
             }
+        }
+    });
+}
+
+function postMessageReadyState(request, resolve, reject){
+    if (request.readyState !== 4){
+        return
+    }
+    console.log("readystate: ")
+    console.log(request.readyState)
+    console.log("status: " + request.status)
+    console.log("response: ")
+    console.log(request.responseText)
+    console.log("statusText: ")
+    console.log(request.statusText)
+    if (request.status == 201){
+        resolve("hej")
+    } else {
+        reject("då")
+    }   
+}
+
+async function postMessage(token, message, toEmail){
+    return new Promise( (resolve, reject) => {
+        console.log("token")
+        console.log(token)
+        console.log("message")
+        console.log(message)
+        console.log("toEmail")
+        console.log(toEmail)
+        
+        let request = initiateXHR("POST", "/post_message")
+        let body = {
+            'email'     : toEmail,
+            'message'   : message
+        }
+        request.setRequestHeader('Authorization', token)
+        request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+        console.log("body(string): ")
+        console.log(JSON.stringify(body))
+        // console.table(body)
+        request.send( JSON.stringify(body) )
+
+        request.onreadystatechange = () => {
+            postMessageReadyState(request, resolve, reject)
         }
     });
 }
@@ -184,6 +258,7 @@ async function loadMessages(email = null){
         return
     }
 
+    console.log("usermessages: ")
     console.table(userMessages)
 
     let templateMessageBox = document.getElementById("template-message-box");
@@ -205,7 +280,7 @@ async function loadMessages(email = null){
     }
 }
 
-function sendMessage(formElement, event){    
+async function sendMessage(formElement, event){    
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
     let toEmail = null;
@@ -223,7 +298,20 @@ function sendMessage(formElement, event){
         toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
     }
 
-    serverstub.postMessage(token, contentBox.value, toEmail);
+    // serverstub.postMessage(token, contentBox.value, toEmail);
+    console.log("send message")
+    try{
+        let response = await postMessage(token, contentBox.value, toEmail);
+    } catch(err){
+        console.log("sendMessage error:")
+        console.log(err)
+        event.preventDefault()
+        return false
+    }
+    console.log("efter postMessage await")
+    event.preventDefault()
+
+
     contentBox.value = '';
     loadMessages(toEmail);
     event.preventDefault();

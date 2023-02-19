@@ -115,10 +115,9 @@ def get_user_messages_by_email(email):
     return result
 
 
-# Artikel om att sanitera input https://benhoyt.com/writings/dont-sanitize-do-escape/
-#                               https://semgrep.dev/docs/cheat-sheets/flask-xss/
 @app.route('/post_message', methods = ['POST'])
 def post_message():
+    print("den anropades!")
     token = request.headers.get('Authorization')
     fromEmail = db.validate_token_and_get_user(token)
     data = request.get_json()
