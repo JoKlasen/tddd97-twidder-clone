@@ -81,6 +81,8 @@ async function getActiveUser(){
             }
     } );
 }
+
+
 function getMessagesReadyState(request, resolve, reject){
     if (request.readyState !== 4){
         return
@@ -148,29 +150,16 @@ function postMessageReadyState(request, resolve, reject){
     if (request.readyState !== 4){
         return
     }
-    console.log("readystate: ")
-    console.log(request.readyState)
-    console.log("status: " + request.status)
-    console.log("response: ")
-    console.log(request.responseText)
-    console.log("statusText: ")
-    console.log(request.statusText)
+
     if (request.status == 201){
-        resolve("hej")
+        resolve("message posted")
     } else {
-        reject("då")
+        reject("message not posted")
     }   
 }
 
 async function postMessage(token, message, toEmail){
-    return new Promise( (resolve, reject) => {
-        console.log("token")
-        console.log(token)
-        console.log("message")
-        console.log(message)
-        console.log("toEmail")
-        console.log(toEmail)
-        
+    return new Promise( (resolve, reject) => {        
         let request = initiateXHR("POST", "/post_message")
         let body = {
             email     : toEmail,
@@ -179,35 +168,75 @@ async function postMessage(token, message, toEmail){
         request.setRequestHeader('Authorization', token)
         request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
 
-        console.log("body(string): ")
-        console.log(JSON.stringify(body))
-        // console.table(body)
         request.send( JSON.stringify(body) )
 
-        request.onreadystatechange = function (){
-            if (request.readyState !== 4){
-                return
-            }
-            console.log("readystate: ")
-            console.log(request.readyState)
-            console.log("status: " + request.status)
-            console.log("response: ")
-            console.log(request.responseText)
-            console.log("statusText: ")
-            console.log(request.statusText)
-
-            if (request.status == 201){
-                resolve("hej")
-            } else {
-                reject("då")
-            }   
+        request.onreadystatechange = () => {
+            postMessageReadyState(request, resolve, reject)
         }
-
-        // request.onreadystatechange = () => {
-        //     postMessageReadyState(request, resolve, reject)
-        // }
     });
 }
+
+function signOutFromServerReadyState(request, resolve, reject){
+    if (request.readyState !== 4){
+        return
+    }
+
+    if (request.status === 200){
+        resolve('Logged out')
+    } else {
+        reject('Log out didn\'t work!')
+    }
+}
+
+async function signOutFromServer(token){
+    return new Promise( (resolve, reject) => {
+        let request = initiateXHR('DELETE', '/sign_out')
+        request.setRequestHeader('Authorization', token)
+        request.send()
+
+        request.onreadystatechange = () => {
+            signOutFromServerReadyState(request, resolve, reject)
+        }
+
+    })
+}
+
+function changePasswordReadyState(request, resolve, reject){
+    if (request.readyState !== 4){
+        return
+    }
+
+    if (request.status == 200){
+        resolve("password change succes")
+    } else {
+        reject("password change fail")
+    }
+} 
+
+async function changePassword(token, oldPassword, newPassword){
+    return new Promise( (resolve, reject)=>{
+        let request = initiateXHR('PUT', '/change_password')
+        request.setRequestHeader('Authorization', token)
+        request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        
+        let body = {
+            'oldPassword' : oldPassword,
+            'newPassword' : newPassword,
+        }
+
+        console.log("changepassword: ")
+        console.table(body)
+        console.log(token)
+        console.log(JSON.stringify(body))
+
+        request.send(JSON.stringify(body))
+
+        request.onreadystatechange = () => {
+            changePasswordReadyState(request, resolve, reject)
+        }
+    })
+}
+
 // ---------------- /SERVER INTERFACE ---------------- 
 
 
@@ -310,23 +339,16 @@ async function sendMessageFromHome(formElement, event){
 }
 
 async function sendMessage(formElement, event, toEmail){    
-    event.preventDefault()
+    event.preventDefault() // viktigt med "prevenDefault" innan allting för firefox för annars funkar inte att skicka request
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
-    // let toEmail = null;
-    // toEmail = window.localStorage.getItem('currently_viewed_profile');
 
     if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
         let modalBody = ['You have not chosen any user to browse yet.'];
         let modalTitle = 'Error: couldn\'t send message';
         showModal('profile-section', modalBody, modalTitle);
-        // event.preventDefault();
         return;
     }
-
-    // if (toEmail == null){
-    //     toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
-    // }
 
     console.log("email:")
     console.log(toEmail)
@@ -338,13 +360,11 @@ async function sendMessage(formElement, event, toEmail){
     } catch(err){
         console.log("sendMessage error:")
         console.log(err)
-        // event.preventDefault()
         return false
     }
 
     contentBox.value = '';
     loadMessages(toEmail);
-    // event.preventDefault();
 }
 
 // async function sendMessage(formElement, event){    
@@ -409,19 +429,19 @@ function colorAnchor(anchorID, color){
     currentAnchor.style.color = color;          // toggleClass istället
 }
 
-// TODO: Meddela server att vi loggar ut
-function signOut(event){
+async function signOut(event){
     colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
     CURRENT_PROFILE_TAB = 'home';
 
-    let response = serverstub.signOut(getToken());
-    
-    if (!response.success){
-        let modalBody = [response.message];
+    try{
+        let response = await signOutFromServer(getToken()) 
+    } catch(err){
+        let modalBody = [err];
         let modalTitle = 'Sign out status'; 
         showModal('profile-section', modalBody, modalTitle);
-        return;
+        return
     }
+
     deleteToken();
     deleteUser('active_user');
     deleteUser('currently_viewed_profile');
@@ -448,38 +468,42 @@ function toAccount(event){
     putDotsBetweenElements("label-input-pair");
     event.preventDefault();
 }
-function validatePasswordChange(event){
+async function validatePasswordChange(event){
+    event.preventDefault()
     let oldPasswordElement = document.getElementById('password-old');
     let newPasswordElement = document.getElementById('password-new');
     let newPasswordAgainElement = document.getElementById('password-new-again');
 
     let modalBody = [];
     let modalTitle = '';
-
+    console.log("newPassword")
+    console.log(newPasswordElement.value)
+    console.log("newPasswordAgain")
+    console.log(newPasswordAgainElement.value)
     if (newPasswordElement.value !== newPasswordAgainElement.value){
         modalTitle = 'Error changing password';
         modalBody = ['New passwords doesn\'t match!'];
         showModal('profile-section', modalBody, modalTitle);
-        event.preventDefault()
         return; 
     }
 
-    let response = serverstub.changePassword(getToken(), oldPasswordElement.value, newPasswordElement.value);
-    modalBody = [response.message];
-    modalTitle = 'Password change status: ';
-    
-    if (response.success){
+    try{
+        let response = await changePassword(getToken(), oldPasswordElement.value, newPasswordElement.value)
         modalTitle += 'success';
-    }else{
+        modalBody = [response];
+    } catch(err){
+        console.log("password change error: ")
+        console.log(err)
         modalTitle += 'fail';
+        modalBody = [err];
     }
+
+    modalTitle = 'Password change status: ';    
     showModal('profile-section', modalBody, modalTitle);
     
     oldPasswordElement.value = '';
     newPasswordElement.value = '';
     newPasswordAgainElement.value = '';
-
-    event.preventDefault();
 }
 
 // ---------------- /Profile functions ----------------

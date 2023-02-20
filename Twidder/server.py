@@ -51,9 +51,10 @@ def sign_out():
 
 @app.route("/change_password", methods = ['PUT'])
 def change_password():
+    print("kom hit!")
     token = request.headers.get('Authorization')
     data = request.get_json()
-
+    print(data)
     if data is None:
         return 'No body data sent', 400
 
@@ -117,7 +118,6 @@ def get_user_messages_by_email(email):
 
 @app.route('/post_message', methods = ['POST'])
 def post_message():
-    print("den anropades!")
     token = request.headers.get('Authorization')
     fromEmail = db.validate_token_and_get_user(token)
     data = request.get_json()
@@ -137,4 +137,4 @@ def post_message():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host = "localhost", port = 5001)
+    app.run(host = "localhost", port = 5000)
