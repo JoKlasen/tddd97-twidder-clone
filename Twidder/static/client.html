@@ -150,7 +150,7 @@
                     
                         </div>
 
-                        <form action="" onsubmit="sendMessage(this, event)" id="home-send-messages" class="send-messages flex-row-container">
+                        <form action="" onsubmit="sendMessageFromHome(this, event)" id="home-send-messages" class="send-messages flex-row-container">
                             <textarea id="home-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="home-send-message-button" class="button-style flex-fill" value="Send" type="submit">    
@@ -209,7 +209,7 @@
                         <div id="browse-posted-messages" class="posted-messages">
                         </div>
 
-                        <form action="" onsubmit="sendMessage(this, event)" id="browse-send-messages" class="send-messages flex-row-container">
+                        <form action="" onsubmit="sendMessageFromBrowse(this, event)" id="browse-send-messages" class="send-messages flex-row-container">
                             <textarea id="browse-send-message-text" class="send-message-text"></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="browse-send-message-button" class="button-style flex-fill" value="Send" type="submit">     

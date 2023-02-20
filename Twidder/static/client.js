@@ -173,8 +173,8 @@ async function postMessage(token, message, toEmail){
         
         let request = initiateXHR("POST", "/post_message")
         let body = {
-            'email'     : toEmail,
-            'message'   : message
+            email     : toEmail,
+            message   : message
         }
         request.setRequestHeader('Authorization', token)
         request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
@@ -184,9 +184,28 @@ async function postMessage(token, message, toEmail){
         // console.table(body)
         request.send( JSON.stringify(body) )
 
-        request.onreadystatechange = () => {
-            postMessageReadyState(request, resolve, reject)
+        request.onreadystatechange = function (){
+            if (request.readyState !== 4){
+                return
+            }
+            console.log("readystate: ")
+            console.log(request.readyState)
+            console.log("status: " + request.status)
+            console.log("response: ")
+            console.log(request.responseText)
+            console.log("statusText: ")
+            console.log(request.statusText)
+
+            if (request.status == 201){
+                resolve("hej")
+            } else {
+                reject("då")
+            }   
         }
+
+        // request.onreadystatechange = () => {
+        //     postMessageReadyState(request, resolve, reject)
+        // }
     });
 }
 // ---------------- /SERVER INTERFACE ---------------- 
@@ -280,42 +299,93 @@ async function loadMessages(email = null){
     }
 }
 
-async function sendMessage(formElement, event){    
+async function sendMessageFromBrowse(formElement, event){
+    let toEmail = window.localStorage.getItem('currently_viewed_profile');
+    sendMessage(formElement, event, toEmail)
+}
+
+async function sendMessageFromHome(formElement, event){
+    let toEmail = JSON.parse(window.localStorage.getItem("active_user")).email
+    sendMessage(formElement, event, toEmail)
+}
+
+async function sendMessage(formElement, event, toEmail){    
+    event.preventDefault()
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
-    let toEmail = null;
-    toEmail = window.localStorage.getItem('currently_viewed_profile');
+    // let toEmail = null;
+    // toEmail = window.localStorage.getItem('currently_viewed_profile');
 
     if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
         let modalBody = ['You have not chosen any user to browse yet.'];
         let modalTitle = 'Error: couldn\'t send message';
         showModal('profile-section', modalBody, modalTitle);
-        event.preventDefault();
+        // event.preventDefault();
         return;
     }
 
-    if (toEmail == null){
-        toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
-    }
+    // if (toEmail == null){
+    //     toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
+    // }
 
-    // serverstub.postMessage(token, contentBox.value, toEmail);
-    console.log("send message")
+    console.log("email:")
+    console.log(toEmail)
+    console.log("token: ")
+    console.log(token)
+
     try{
         let response = await postMessage(token, contentBox.value, toEmail);
     } catch(err){
         console.log("sendMessage error:")
         console.log(err)
-        event.preventDefault()
+        // event.preventDefault()
         return false
     }
-    console.log("efter postMessage await")
-    event.preventDefault()
-
 
     contentBox.value = '';
     loadMessages(toEmail);
-    event.preventDefault();
+    // event.preventDefault();
 }
+
+// async function sendMessage(formElement, event){    
+//     let token = getToken();
+//     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
+//     let toEmail = null;
+//     toEmail = window.localStorage.getItem('currently_viewed_profile');
+//     console.log("Inuti send message")
+//     console.log("toEmail")
+//     console.log(toEmail)
+
+//     if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
+//         let modalBody = ['You have not chosen any user to browse yet.'];
+//         let modalTitle = 'Error: couldn\'t send message';
+//         showModal('profile-section', modalBody, modalTitle);
+//         event.preventDefault();
+//         return;
+//     }
+
+//     if (toEmail == null){
+//         toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
+//     }
+//     console.log("min email?")
+//     console.log(toEmail)
+//     // serverstub.postMessage(token, contentBox.value, toEmail);
+//     try{
+//         let response = await postMessage(token, contentBox.value, toEmail);
+//     } catch(err){
+//         console.log("sendMessage error:")
+//         console.log(err)
+//         event.preventDefault()
+//         return false
+//     }
+//     console.log("efter postMessage await")
+//     event.preventDefault()
+
+
+//     contentBox.value = '';
+//     loadMessages(toEmail);
+//     event.preventDefault();
+// }
 
 function searchAndDisplayUser(event){
     let userEmail = document.getElementById('search-user-email').value;
@@ -528,6 +598,7 @@ let displayLoggedin = async function() {
     loadMessages();
 }
 
+// använder inte promises ännu, fixa?
 function validateSignIn(event){
 
     let emailInput      = document.getElementById("email");
@@ -557,7 +628,6 @@ function validateSignIn(event){
                 let token = JSON.parse(request.responseText);
                 setToken(token['token']);
                 displayView();
-
             }else {
                 
                 let modalTitle = 'Sign in status: fail';
@@ -689,8 +759,7 @@ async function displayView(){
         userData = await getActiveUser()
         loggedIn = userData.success
     } catch(err){
-        console.error("Working as intended?: " + err)
-        return
+        loggedIn = false
     }
         
     if (loggedIn){
