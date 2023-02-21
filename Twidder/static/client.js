@@ -103,8 +103,6 @@ async function getUserMessagesByEmail(token, email){
         request.setRequestHeader('Authorization', token)
         request.send()
 
-        // tilldelar onreadystatechange en "arrow function" som wrappar
-        // "getMessagesReadState"
         request.onreadystatechange = () => {
             getMessagesReadyState(request, resolve, reject );
         }
@@ -207,7 +205,7 @@ function changePasswordReadyState(request, resolve, reject){
     }
 
     if (request.status == 200){
-        resolve("password change succes")
+        resolve("password change success")
     } else {
         reject("password change fail")
     }
@@ -223,11 +221,6 @@ async function changePassword(token, oldPassword, newPassword){
             'oldPassword' : oldPassword,
             'newPassword' : newPassword,
         }
-
-        console.log("changepassword: ")
-        console.table(body)
-        console.log(token)
-        console.log(JSON.stringify(body))
 
         request.send(JSON.stringify(body))
 
@@ -306,9 +299,6 @@ async function loadMessages(email = null){
         return
     }
 
-    console.log("usermessages: ")
-    console.table(userMessages)
-
     let templateMessageBox = document.getElementById("template-message-box");
     let messageContainer = document.getElementById(CURRENT_PROFILE_TAB + '-posted-messages');
 
@@ -350,11 +340,6 @@ async function sendMessage(formElement, event, toEmail){
         return;
     }
 
-    console.log("email:")
-    console.log(toEmail)
-    console.log("token: ")
-    console.log(token)
-
     try{
         let response = await postMessage(token, contentBox.value, toEmail);
     } catch(err){
@@ -366,46 +351,6 @@ async function sendMessage(formElement, event, toEmail){
     contentBox.value = '';
     loadMessages(toEmail);
 }
-
-// async function sendMessage(formElement, event){    
-//     let token = getToken();
-//     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
-//     let toEmail = null;
-//     toEmail = window.localStorage.getItem('currently_viewed_profile');
-//     console.log("Inuti send message")
-//     console.log("toEmail")
-//     console.log(toEmail)
-
-//     if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
-//         let modalBody = ['You have not chosen any user to browse yet.'];
-//         let modalTitle = 'Error: couldn\'t send message';
-//         showModal('profile-section', modalBody, modalTitle);
-//         event.preventDefault();
-//         return;
-//     }
-
-//     if (toEmail == null){
-//         toEmail = JSON.parse(window.localStorage.getItem("active_user")).email;
-//     }
-//     console.log("min email?")
-//     console.log(toEmail)
-//     // serverstub.postMessage(token, contentBox.value, toEmail);
-//     try{
-//         let response = await postMessage(token, contentBox.value, toEmail);
-//     } catch(err){
-//         console.log("sendMessage error:")
-//         console.log(err)
-//         event.preventDefault()
-//         return false
-//     }
-//     console.log("efter postMessage await")
-//     event.preventDefault()
-
-
-//     contentBox.value = '';
-//     loadMessages(toEmail);
-//     event.preventDefault();
-// }
 
 function searchAndDisplayUser(event){
     let userEmail = document.getElementById('search-user-email').value;
@@ -624,7 +569,7 @@ let displayLoggedin = async function() {
 
 // använder inte promises ännu, fixa?
 function validateSignIn(event){
-
+    event.preventDefault();
     let emailInput      = document.getElementById("email");
     let passwordInput   = document.getElementById("password");
 
@@ -667,13 +612,12 @@ function validateSignIn(event){
     // let response = serverstub.signIn(emailInput.value, passwordInput.value); 
 
     // No refresh of the webpage. Profile view loaded manually.
-    event.preventDefault();
 }
 
 function validateSignUp(formElement, event){
 
     let genderSelect = formElement["gender-input"];
-    let password = formElement["password-new"];
+    let password = formElement["password-new-signup"];
     let passwordRepeat = formElement["password-repeat"];
     
     let modalTitle = "Some info is missing";
@@ -715,6 +659,7 @@ function validateSignUp(formElement, event){
                         country: document.getElementById("country").value,
                     }
     
+    // Await här?
     let request = initiateXHR("POST", "/sign_up");
     request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     request.send(JSON.stringify(formData));

@@ -7,6 +7,8 @@
                 classList toggle för att byta klass?
 
                 begränsa meddelanden till ca 300
+
+                Await för modal för signUp/signIn?
     -->
     <head> 
         <title>Twidder</title>
@@ -87,7 +89,7 @@
 
                             <div class="label-input-pair flex-row-container">
                                 <label for="password-new" class="label">Password</label>
-                                <input type="password" id="password-new" class="input" minlength="4" required>
+                                <input type="password" id="password-new-signup" class="input" minlength="4" required>
                             </div>
 
                             <div class="label-input-pair flex-row-container">
@@ -229,11 +231,11 @@
                         </div>
                         <div class="label-input-pair flex-row-container"> 
                             <label for="password-new" class="label">New password</label>
-                            <input type="password" id="password-new" class="input" required>
+                            <input type="password" id="password-new" class="input" minlength="4" required>
                         </div>
                         <div class="label-input-pair flex-row-container"> 
                             <label for="password-new-again" class="label">New password again</label>
-                            <input type="password" id="password-new-again" class="input" required>
+                            <input type="password" id="password-new-again" class="input" minlength="4" required>
                         </div>
                         <div class="item-align-center" class="flex-row-container">
                             <input class="center-submit" type="submit" value="Enter"> 

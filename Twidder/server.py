@@ -1,8 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_sock import Sock
 import database_helper as db
 import help_functions  as hf
 
 app = Flask(__name__)
+sockets = Sock(app)
+
+@sockets.route("/echo")
+def echo_socket(ws):
+    while True:
+        data = ws.receive()
+        ws.send(data)
 
 
 @app.teardown_request
@@ -136,5 +144,5 @@ def post_message():
     
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True
     app.run(host = "localhost", port = 5000)
