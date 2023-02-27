@@ -572,7 +572,7 @@ function validateSignIn(event){
     event.preventDefault();
     let emailInput      = document.getElementById("email");
     let passwordInput   = document.getElementById("password");
-
+    
     if (passwordInput.length > 100){
         let modalTitle = 'Sign in status: fail';
         let modalBody = [''];
@@ -580,25 +580,24 @@ function validateSignIn(event){
         event.preventDefault();
         return false;
     }
-
+    
     let body =   {     
-                    email : emailInput.value, 
-                    password : passwordInput.value
-                 } 
-
+        email : emailInput.value, 
+        password : passwordInput.value
+    } 
+    
     let request = initiateXHR("POST", "/sign_in");
     request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     request.send(JSON.stringify(body));
     
     request.onreadystatechange =  function(){
         if (request.readyState == 4){
-
+            
             if (request.status == 200){
                 let token = JSON.parse(request.responseText);
                 setToken(token['token']);
                 displayView();
             }else {
-                
                 let modalTitle = 'Sign in status: fail';
                 let modalBody = [request.responseText];
                 showModal('welcome-section', modalBody, modalTitle);        
@@ -608,14 +607,14 @@ function validateSignIn(event){
             }
         }
     }
-
+    
     // let response = serverstub.signIn(emailInput.value, passwordInput.value); 
-
+    
     // No refresh of the webpage. Profile view loaded manually.
 }
 
 function validateSignUp(formElement, event){
-
+    
     let genderSelect = formElement["gender-input"];
     let password = formElement["password-new-signup"];
     let passwordRepeat = formElement["password-repeat"];
@@ -734,6 +733,7 @@ async function displayView(){
     if (loggedIn){
         delete userData['success']
         saveUser(userData);
+        initiateWebSocket();
         displayLoggedin();
     } else{
         displayNotLoggedin();
@@ -746,4 +746,5 @@ window.onload = async function(){
     console.log("page has been loaded");
     displayView();
     // checkSignUpStatus();
+    
 }

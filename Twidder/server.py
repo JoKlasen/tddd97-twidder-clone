@@ -4,13 +4,46 @@ import database_helper as db
 import help_functions  as hf
 
 app = Flask(__name__)
+
+# -------------------- WebSocket --------------------
 sockets = Sock(app)
+active_sockets = {}
+
+def logout_user(user):
+    socket = active_sockets[user]
+    del active_sockets[user]
+    socket.send("logout")
+
+
+
 
 @sockets.route("/echo")
 def echo_socket(ws):
     while True:
         data = ws.receive()
+        print(data)
         ws.send(data)
+
+@sockets.route("/sign_in")
+def echo_socket(ws):
+    while True:
+        token = ws.receive()
+        user = db.validate_token_and_get_user(token)
+
+        if user in active_sockets:
+            logout_user(user)
+        
+        # plocka ut token från data
+        # checka att kombination token stämmer
+        # kolla om email redan finns --> ta bort den andra användaren (logga ut denna)
+        # Lägg in ny användare i active_socket
+
+        active_sockets[user] = ws
+
+        print(data)
+        ws.send(response)
+
+# -------------------- /WebSocket --------------------
 
 
 @app.teardown_request
@@ -144,5 +177,5 @@ def post_message():
     
 
 if __name__ == '__main__':
-    # app.debug = True
+    app.debug = True
     app.run(host = "localhost", port = 5000)
