@@ -5,43 +5,79 @@ import help_functions  as hf
 
 app = Flask(__name__)
 
+# Komplettering: status koder inte i database helper 
+
+
 # -------------------- WebSocket --------------------
-sockets = Sock(app)
+socket = Sock(app)
 active_sockets = {}
 
+# ConnectionClosed exception to handle do custom cleanup
+
 def logout_user(user):
-    socket = active_sockets[user]
-    del active_sockets[user]
-    socket.send("logout")
+    print("i socket logouts")
+    logout_sock = active_sockets[user]
+    logout_sock.send("logout")
+    # del active_sockets[user]
 
-
-
-
-@sockets.route("/echo")
+@socket.route("/echo")
 def echo_socket(ws):
     while True:
         data = ws.receive()
         print(data)
         ws.send(data)
 
-@sockets.route("/sign_in")
-def echo_socket(ws):
+@socket.route("/sign_in_websocket")
+def sign_in_websocket(ws):
     while True:
-        token = ws.receive()
-        user = db.validate_token_and_get_user(token)
-
-        if user in active_sockets:
-            logout_user(user)
+        try:
+            token = ws.receive()
+            user = db.validate_token_and_get_user(token)
+            active_sockets[user] = (ws, token)
         
-        # plocka ut token från data
-        # checka att kombination token stämmer
-        # kolla om email redan finns --> ta bort den andra användaren (logga ut denna)
-        # Lägg in ny användare i active_socket
+        except Exception as e:
+            print(e)
+            break
+        
+        
+        
+        
+        
+        
+        
+        try:
+            token = ws.receive()
+            user = db.validate_token_and_get_user(token)
 
-        active_sockets[user] = ws
+            # print(user)
+            if user in active_sockets:
+                logout_user(user)
+            
+            active_sockets[user] = ws
+            # print(active_sockets)
+            # print(token)
+            ws.send(token)
 
-        print(data)
-        ws.send(response)
+        except Exception as e:
+            print(e)
+            break
+    # while True:
+    #     try:
+    #         token = ws.receive()
+    #         user = db.validate_token_and_get_user(token)
+
+    #         # print(user)
+    #         if user in active_sockets:
+    #             logout_user(user)
+            
+    #         active_sockets[user] = ws
+    #         # print(active_sockets)
+    #         # print(token)
+    #         ws.send(token)
+
+    #     except Exception as e:
+    #         print(e)
+    #         break
 
 # -------------------- /WebSocket --------------------
 

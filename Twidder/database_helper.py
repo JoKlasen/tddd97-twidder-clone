@@ -152,6 +152,7 @@ def sign_in_user(email, password):
         hf.print_except(e)
         return 'Internal server error', 500
 
+    # returnera tuple för att avsluta socket connection
     return jsonify(result)
 
 def sign_out_user(token):

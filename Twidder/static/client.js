@@ -330,6 +330,7 @@ async function sendMessageFromHome(formElement, event){
 
 async function sendMessage(formElement, event, toEmail){    
     event.preventDefault() // viktigt med "prevenDefault" innan allting för firefox för annars funkar inte att skicka request
+    socket.send("hej")
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
 
@@ -374,10 +375,7 @@ function colorAnchor(anchorID, color){
     currentAnchor.style.color = color;          // toggleClass istället
 }
 
-async function signOut(event){
-    colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
-    CURRENT_PROFILE_TAB = 'home';
-
+async function signOutHard(event){
     try{
         let response = await signOutFromServer(getToken()) 
     } catch(err){
@@ -386,6 +384,16 @@ async function signOut(event){
         showModal('profile-section', modalBody, modalTitle);
         return
     }
+    signOut(event)
+}
+
+async function signOutSoft(event){
+    signOut(event)
+}
+
+async function signOut(event){
+    colorAnchor(CURRENT_PROFILE_TAB + 'Anchor', 'blue');
+    CURRENT_PROFILE_TAB = 'home';
 
     deleteToken();
     deleteUser('active_user');
@@ -738,6 +746,7 @@ async function displayView(){
     } else{
         displayNotLoggedin();
     }
+    console.table(socket)
 }
 
 // ---------------- /Welcome functions ----------------
@@ -746,5 +755,5 @@ window.onload = async function(){
     console.log("page has been loaded");
     displayView();
     // checkSignUpStatus();
-    
+
 }

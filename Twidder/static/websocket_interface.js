@@ -3,7 +3,8 @@ let socket;
 
 
 function initiateWebSocket(){
-    socket = new WebSocket("ws://localhost:5000/echo")
+    setTimeout(1000)
+    socket = new WebSocket("ws://localhost:5000/sign_in_websocket")
 
     socket.onopen = () => {
         socket.send( getToken() )
@@ -14,7 +15,8 @@ function initiateWebSocket(){
 
         console.log(event.data);
         if(event.data === 'logout'){
-            console.log("logout me!")
+            signOutSoft()
         }
     }
+
 }
