@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sock import Sock
 import database_helper as db
 import help_functions  as hf
+from help_functions import UseError
 
 app = Flask(__name__)
 
@@ -128,15 +129,27 @@ def sign_out():
 
 @app.route("/change_password", methods = ['PUT'])
 def change_password():
-    print("kom hit!")
     token = request.headers.get('Authorization')
     data = request.get_json()
-    print(data)
-    if data is None:
-        return 'No body data sent', 400
 
-    result = db.change_user_password(token, data)               # Validation of token is done within "change_user_password"
-    return result
+    if data is None:
+        return jsonify('No body data sent'), 400
+
+    user = db.validate_token_and_get_user(token)
+
+    if user is None:
+        return jsonify('Invalid token'), 401
+    
+    if data is None or not (hf.is_within_range(data['newPassword'], hf.PSW_MIN_LEN, hf.PSW_MAX_LEN)):
+        return jsonify('Password too short or too long'), 400
+    
+    if not db.correct_pass(data['oldPassword']):
+        return jsonify('Wrong old password'), 403
+
+    if not db.change_user_password(token, data, user):
+        return jsonify('Internal server error'), 500
+    
+    return jsonify(''), 200
 
 
 @app.route("/get_user_data_by_token", methods = ['GET'])

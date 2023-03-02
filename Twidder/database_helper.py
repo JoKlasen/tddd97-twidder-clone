@@ -1,6 +1,8 @@
 from flask import g, jsonify
 import sqlite3
 import help_functions as hf
+from help_functions import UseError
+
 
 DATABASE_URI = 'database.db'
 
@@ -37,8 +39,6 @@ def execute_and_commit(query, columns):
     get_db().commit()
 
 # _________Database wrapper functions_________
-
-
 
 
 # _________Database/Server Interface_________
@@ -170,28 +170,15 @@ def sign_out_user(token):
 
     return '', 200 
 
-def change_user_password(token, data):
-
-    user = validate_token_and_get_user(token)
-
-    if user is None:
-        return 'Invalid token', 401
-
-    if data is None or not (hf.is_within_range(data['newPassword'], hf.PSW_MIN_LEN, hf.PSW_MAX_LEN)):
-        return 'Password too short or too long', 400
-
-    match = select_one_match("SELECT pass FROM users WHERE pass LIKE ?", [data['oldPassword']])
-
-    if match is None:
-        return 'Wrong old password', 403
+def change_user_password(token, data, user):
 
     try:
         execute_and_commit("UPDATE users SET pass = ? WHERE email LIKE ?", [data['newPassword'], user])
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500 
-
-    return '', 200
+        return False 
+    
+    return True
 
 
 def validate_token_and_get_user(token):
@@ -201,5 +188,15 @@ def validate_token_and_get_user(token):
         return None
     else:
         return match[0]
+
+
+def correct_pass(password):
+    match = select_one_match("SELECT pass FROM users WHERE pass LIKE ?", [password])
+    print(match)
+    print(password)
+    if match is None:
+        print("correct pass?")
+        return False
+    return True
 
 # _________Database/Server Interface_________
