@@ -6,20 +6,33 @@ from help_functions import UseError
 
 app = Flask(__name__)
 
-# Komplettering: status koder inte i database helper 
+# Projekt prioriteringar:
+#   1. Deploy your solution
+#   2. Live data / secure password
+#   3. Geolocation
+
 
 
 # -------------------- WebSocket --------------------
 socket = Sock(app)
 active_sockets = {}
 
-# ConnectionClosed exception to handle do custom cleanup
 
-def logout_user(user):
-    print("i socket logouts")
+def disconnect_socket(user):
+    if not user in active_sockets:
+        print("No active websocket for: ")
+        print(user)
+        return
+    
     logout_sock = active_sockets[user]
-    logout_sock.send("logout")
-    # del active_sockets[user]
+    try:
+        logout_sock.send("logout")
+        logout_sock.close()
+        del active_sockets[user]
+    except Exception as e:
+        print("exception i disconnect socket:")
+        print(e)
+
 
 @socket.route("/echo")
 def echo_socket(ws):
@@ -28,57 +41,26 @@ def echo_socket(ws):
         print(data)
         ws.send(data)
 
-@socket.route("/sign_in_websocket")
-def sign_in_websocket(ws):
+
+@socket.route("/connect")
+def connect(ws):
     while True:
         try:
             token = ws.receive()
             user = db.validate_token_and_get_user(token)
-            active_sockets[user] = (ws, token)
-        
-        except Exception as e:
-            print(e)
-            break
-        
-        
-        
-        
-        
-        
-        
-        try:
-            token = ws.receive()
-            user = db.validate_token_and_get_user(token)
-
-            # print(user)
-            if user in active_sockets:
-                logout_user(user)
             
+            if user is None:
+                print("email in connect:")
+                print(user)
+                continue
+
             active_sockets[user] = ws
-            # print(active_sockets)
-            # print(token)
-            ws.send(token)
-
+            print("(i connect) active sockets!")
+            print(active_sockets)
         except Exception as e:
+            print("Exception i connect")
             print(e)
             break
-    # while True:
-    #     try:
-    #         token = ws.receive()
-    #         user = db.validate_token_and_get_user(token)
-
-    #         # print(user)
-    #         if user in active_sockets:
-    #             logout_user(user)
-            
-    #         active_sockets[user] = ws
-    #         # print(active_sockets)
-    #         # print(token)
-    #         ws.send(token)
-
-    #     except Exception as e:
-    #         print(e)
-    #         break
 
 # -------------------- /WebSocket --------------------
 
@@ -98,34 +80,66 @@ def sign_up():
     data = request.get_json()
 
     if not hf.is_valid_sign_up(data):
-        return 'Body data is not correctly formatted', 400
+        return jsonify('Body data is not correctly formatted'), 400
 
-    result = db.add_user(data)
-    print(result)
-    return result
+    if db.existing_user(data['email']):
+        return jsonify('User already exists'), 409
+
+    if not db.add_user(data):
+        return jsonify('Internal server error'), 500
+    
+    return jsonify(''), 201
 
 
 @app.route("/sign_in", methods = ['POST'])
 def sign_in():
     data = request.get_json()
-
+    print("i sign in, sockets:")
+    print(active_sockets)
     if data is None:
-        return 'No body data sent', 400
+        return jsonify('No body data sent'), 400
 
     if not( hf.is_valid_email(data['email']) and hf.is_within_range(data['password'], hf.PSW_MIN_LEN, hf.PSW_MAX_LEN) ):
-        return 'Body data is not correctly formatted', 400
+        return jsonify('Body data is not correctly formatted'), 400
     
-    result = db.sign_in_user(data['email'], data['password'])
-    return result
+    if not db.existing_user(data['email'], data['password']):
+        return jsonify('Invalid email and/or password'), 400
+
+    result, updated  = db.sign_in_user(data['email'])
+    
+    if not result['success']:
+        return jsonify('Internal server error'), 500
+
+    if updated:
+        disconnect_socket(data['email'])
+
+    del result['success']
+    return jsonify(result), 200
 
 
 @app.route("/sign_out", methods = ['DELETE'])
 def sign_out():
     token = request.headers.get('Authorization')
+    user = db.validate_token_and_get_user(token)
 
-    result = db.sign_out_user(token)                            # Validation of token is done within "sign_out_user"
-    return result
+    if user is None:
+        return jsonify('Invalid token'), 401
 
+    if not db.sign_out_user(user):
+        return jsonify('Internal server error'), 500
+    
+    if user in active_sockets:
+        try:
+            ws = active_sockets[user]
+            ws.close()
+            del active_sockets[user]
+        except Exception as e:
+            print("Exception in sign_out cleanup")
+            print(e)
+
+    return jsonify(''), 200
+
+    
 
 @app.route("/change_password", methods = ['PUT'])
 def change_password():
@@ -143,10 +157,10 @@ def change_password():
     if data is None or not (hf.is_within_range(data['newPassword'], hf.PSW_MIN_LEN, hf.PSW_MAX_LEN)):
         return jsonify('Password too short or too long'), 400
     
-    if not db.correct_pass(data['oldPassword']):
+    if not db.existing_user(user, data['oldPassword']):
         return jsonify('Wrong old password'), 403
 
-    if not db.change_user_password(token, data, user):
+    if not db.change_user_password(data, user):
         return jsonify('Internal server error'), 500
     
     return jsonify(''), 200
@@ -160,8 +174,16 @@ def get_user_data_by_token():
     if user is None:
         return 'Invalid token', 401
 
-    result = db.get_user_data(user)    
-    return result
+    if not db.existing_user(user):
+        return 'Invalid email', 400
+
+    result = db.get_user_data(user)
+
+    if not result['success']:
+        return jsonify('Internal server error'), 500 
+
+    del result['success']
+    return jsonify(result), 200
 
 
 @app.route("/get_user_data_by_email/<email>", methods = ['GET'])
@@ -170,13 +192,18 @@ def get_user_data_by_email(email):
     user = db.validate_token_and_get_user(token)
 
     if user is None:
-        return 'Invalid token', 401
+        return jsonify('Invalid token'), 401
 
     if not hf.is_valid_email(email):
-        return 'Invalid email', 400
-        
+        return jsonify('Invalid email'), 400
+    
     result = db.get_user_data(email)
-    return result
+    
+    if not result['success']:
+        return jsonify('Internal server error'), 500 
+
+    del result['success']
+    return jsonify(result), 200
 
 
 @app.route("/get_user_messages_by_token", methods = ['GET'])
@@ -185,7 +212,10 @@ def get_user_messages_by_token():
     user = db.validate_token_and_get_user(token)
 
     if user is None:
-        return 'Invalid token', 401
+        return jsonify('Invalid token'), 401
+
+    if not db.existing_user(user):
+        return jsonify('Invalid email'), 400
 
     result = db.get_messages(user)
     return result
@@ -199,11 +229,15 @@ def get_user_messages_by_email(email):
     if user is None:
         return 'Invalid token', 401
 
-    if not hf.is_valid_email(email):
+    if not (hf.is_valid_email(email) or db.existing_user(email)):
         return 'Invalid email', 400
 
-    result = db.get_messages(email)
-    return result
+
+    result, success = db.get_messages(email)
+    if not success:
+        return jsonify('Internal server error'), 500
+
+    return jsonify(result), 200
 
 
 @app.route('/post_message', methods = ['POST'])
@@ -213,16 +247,24 @@ def post_message():
     data = request.get_json()
     
     if fromEmail is None:
-        return 'Invalid token', 401
+        return jsonify('Invalid token'), 401
 
     if data is None:
-        return 'Body data is missing', 400
+        return jsonify('Body data is missing'), 400
 
     if not hf.is_valid_email(data['email']):
-        return 'Invalid email in body', 400
+        return jsonify('Invalid email in body'), 400
 
-    result = db.post_message(data, fromEmail)
-    return result
+    if not hf.is_within_range(data['message'], 1, 400):
+        return jsonify('Message either empty or too long'), 400
+
+    if not db.existing_user(data['email']):
+        return jsonify('Not posting to a valid user'), 400
+
+    if not db.post_message(data, fromEmail):
+        return jsonify('Internal server error'), 500
+
+    return jsonify(''), 201
     
 
 if __name__ == '__main__':

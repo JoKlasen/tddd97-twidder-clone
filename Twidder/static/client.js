@@ -330,7 +330,6 @@ async function sendMessageFromHome(formElement, event){
 
 async function sendMessage(formElement, event, toEmail){    
     event.preventDefault() // viktigt med "prevenDefault" innan allting för firefox för annars funkar inte att skicka request
-    socket.send("hej")
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
 
@@ -658,7 +657,7 @@ function validateSignUp(formElement, event){
 
     let formData =  {
                         email : document.getElementById("email-new").value,
-                        password : document.getElementById("password-new").value,
+                        password : document.getElementById("password-new-signup").value,
                         firstname : document.getElementById("first-name").value,
                         familyname : document.getElementById("last-name").value,
                         gender : document.getElementById("gender-input").value,
@@ -705,28 +704,6 @@ function validateSignUp(formElement, event){
     event.preventDefault();
     return false;
 }
-
-// function checkSignUpStatus(){
-    
-//     if (window.localStorage.getItem('sign-up-status') === null)
-//     {
-//         // No sign up was done previous this refresh
-//         return;
-//     }
-    
-//     let modalTitle = 'Sign up status: ' + window.localStorage.getItem('sign-up-status');
-//     let modalBody = [
-//         window.localStorage.getItem('sign-up-message')
-//     ]
-    
-//     showModal(  'welcome-section',  
-//                 modalBody,
-//                 modalTitle
-//                 )
-                
-//     window.localStorage.removeItem('sign-up-status');
-//     window.localStorage.removeItem('sign-up-message'); 
-// }
 
 async function displayView(){
     let userData = {}

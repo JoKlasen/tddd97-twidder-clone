@@ -1,8 +1,6 @@
-from flask import g, jsonify
+from flask import g
 import sqlite3
 import help_functions as hf
-from help_functions import UseError
-
 
 DATABASE_URI = 'database.db'
 
@@ -46,33 +44,21 @@ def post_message(data, fromEmail):
     toEmail = data['email']
     message = data['message']
 
-    if not hf.is_within_range(message, 1, 400):
-        return 'Message either empty or too long', 400
-
     try:
-        match = select_one_match("SELECT * FROM users WHERE email = ?", [toEmail])
-        
-        if match is None:
-            return 'Not posting to a valid user', 400
-
         execute_and_commit("INSERT INTO messages values (?, ?, ?, ?)", [None, toEmail, fromEmail, message])
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        return False
 
-    return '', 201
+    return True
 
 
 def get_messages(email):
+    response = ()
+    result = []
     try:
-        match = select_one_match("SELECT * FROM users WHERE email = ?", [email])
-        
-        if match is None:
-            return 'Invalid email', 400
-
         matches = select_all_matches("SELECT * FROM messages WHERE email LIKE ?", [email])
         
-        result = []
         for tuple in matches:
             result.append( 
                             {
@@ -85,16 +71,16 @@ def get_messages(email):
                          
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        response = (result, False)
+        return response
         
-    return jsonify(result), 200
+    response = (result, True)
+    return response 
 
 def get_user_data(email):
+    result = {}
     try:
         match = select_one_match("SELECT * FROM users WHERE email = ?", [email])
-        
-        if match is None:
-            return 'Invalid email', 400
         
         # Excluding password
         result =    {
@@ -104,39 +90,31 @@ def get_user_data(email):
                         'gender' : match[4],
                         'city' : match[5],
                         'country' : match[6],
+                        'success' : True
                     }
 
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        result['success'] = False
+        return result
 
-    return jsonify(result)  
+    return result  
 
 def add_user(data):
     try:
-        match = select_one_match("SELECT email FROM users WHERE email LIKE ?", [data['email']])
-
-        # User all ready exists
-        if match is not None:
-            return 'User already exists', 409
-
         execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
                                                                                 data['familyname'], data['gender'], data['city'],    
                                                                                 data['country'] ])
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        return False
     
-    return '', 201      
+    return True    
 
-def sign_in_user(email, password):
-
+def sign_in_user(email):
+    updated = False
+    result = {}
     try:
-        match = select_one_match("SELECT email, pass FROM users WHERE email LIKE ? AND pass LIKE ?", [email, password])
-
-        if match is None:
-            return 'Invalid email and/or password', 400
-
         token = hf.generate_token()
 
         match = select_one_match("SELECT email FROM loggedInUsers WHERE email LIKE ?", [email])
@@ -145,32 +123,29 @@ def sign_in_user(email, password):
             execute_and_commit("INSERT INTO loggedInUsers VALUES (?, ?)", [email, token])
         else:
             execute_and_commit("UPDATE loggedInUsers SET token = ? WHERE email = ?", [token, email])
-        
-        result = {"token" : token}
+            updated = True
+
+        result = {"token" : token,
+                   "success" : True}
 
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        result['success'] = False
+        return result, updated
 
-    # returnera tuple för att avsluta socket connection
-    return jsonify(result)
+    return result, updated
 
-def sign_out_user(token):
-    user = validate_token_and_get_user(token)
+def sign_out_user(user):
 
-    if user is None:
-        return 'Invalid token', 401
-    
     try:
         execute_and_commit("DELETE FROM loggedInUsers WHERE email LIKE ?", [user])
-
     except Exception as e:
         hf.print_except(e)
-        return 'Internal server error', 500
+        return False
 
-    return '', 200 
+    return True 
 
-def change_user_password(token, data, user):
+def change_user_password(data, user):
 
     try:
         execute_and_commit("UPDATE users SET pass = ? WHERE email LIKE ?", [data['newPassword'], user])
@@ -190,13 +165,29 @@ def validate_token_and_get_user(token):
         return match[0]
 
 
-def correct_pass(password):
-    match = select_one_match("SELECT pass FROM users WHERE pass LIKE ?", [password])
-    print(match)
-    print(password)
+def existing_user (email = None, password = None):
+    if email is None and password is None:
+        raise Exception("Using function incorrectly!")
+
+    if not (email is None or password is None):
+        return correct_user(email, password)
+    else:
+        return correct_email(email)
+
+
+def correct_email(email):
+    match = select_one_match("SELECT pass FROM users WHERE email LIKE ?", [email])
     if match is None:
-        print("correct pass?")
         return False
     return True
+
+
+def correct_user(email, password):
+    match = select_one_match("SELECT pass FROM users WHERE email LIKE ? AND pass LIKE ?", [email, password])
+    if match is None:
+        return False
+    return True
+
+
 
 # _________Database/Server Interface_________
