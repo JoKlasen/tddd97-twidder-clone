@@ -172,10 +172,10 @@ def get_user_data_by_token():
     user = db.validate_token_and_get_user(token)
 
     if user is None:
-        return 'Invalid token', 401
+        return jsonify('Invalid token'), 401
 
     if not db.existing_user(user):
-        return 'Invalid email', 400
+        return jsonify('Invalid email'), 404
 
     result = db.get_user_data(user)
 
@@ -195,7 +195,7 @@ def get_user_data_by_email(email):
         return jsonify('Invalid token'), 401
 
     if not hf.is_valid_email(email):
-        return jsonify('Invalid email'), 400
+        return jsonify('Invalid email'), 404
     
     result = db.get_user_data(email)
     
@@ -215,7 +215,7 @@ def get_user_messages_by_token():
         return jsonify('Invalid token'), 401
 
     if not db.existing_user(user):
-        return jsonify('Invalid email'), 400
+        return jsonify('Invalid email'), 404
 
     result = db.get_messages(user)
     return result
@@ -227,10 +227,10 @@ def get_user_messages_by_email(email):
     user = db.validate_token_and_get_user(token)
 
     if user is None:
-        return 'Invalid token', 401
+        return jsonify('Invalid token'), 401
 
     if not (hf.is_valid_email(email) or db.existing_user(email)):
-        return 'Invalid email', 400
+        return jsonify('Invalid email'), 404
 
 
     result, success = db.get_messages(email)
@@ -259,7 +259,7 @@ def post_message():
         return jsonify('Message either empty or too long'), 400
 
     if not db.existing_user(data['email']):
-        return jsonify('Not posting to a valid user'), 400
+        return jsonify('Could not find the user posted to'), 404
 
     if not db.post_message(data, fromEmail):
         return jsonify('Internal server error'), 500

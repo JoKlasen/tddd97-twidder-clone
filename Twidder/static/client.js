@@ -52,7 +52,7 @@ function initiateXHR(method, url) {
         request.open(method, url, true);
         return request;
     } catch (e) {
-        console.log("error: ")
+        console.log("initiate XHR error: ")
         console.log(e)
     }
 }
@@ -74,6 +74,8 @@ async function getActiveUser(){
                         userData['success'] = true;
                         resolve(userData)
                     }else {
+                        userData['status'] = request.status;
+                        userData['message'] = JSON.parse( request.responseText ); 
                         userData['success'] = false;
                         reject(userData)
                     }
@@ -93,7 +95,10 @@ function getMessagesReadyState(request, resolve, reject){
         resolve(body)
         
     } else {
-        reject(request.responseText)
+        let error = {};
+        error['status'] = request.status
+        error['message'] = request.responseText
+        reject(error)
     }
 }
 
@@ -137,6 +142,7 @@ async function getUserDataByEmail(email, token){
 
                 }else{
                     body['message'] = request.responseText
+                    body['status']  = request.status
                     reject(body)
                 }
             }
@@ -152,7 +158,7 @@ function postMessageReadyState(request, resolve, reject){
     if (request.status == 201){
         resolve("message posted")
     } else {
-        reject("message not posted")
+        reject("message not posted") // Hämta ut body från response för att få relevant felmeddelande
     }   
 }
 
@@ -245,15 +251,14 @@ async function loadPersonalInfo(userEmail = null){
     } else {
         let token = getToken()
         try{
-            info = await getUserDataByEmail(userEmail, token) 
+            info = await getUserDataByEmail(userEmail, token)
         } catch(err){
             let modalBody = [err.message];
-            let modalTitle = 'User doesn\'t exist :(';
-            showModal('profile-section', modalBody, modalTitle);
-            return
+            let modalTitle = 'Could not find user! Errorcode: ' + err.status;
+            showModal('profile-section', [modalBody], modalTitle);
+            return false
         }
     }
-
 
     let personalInfoContainer = document.getElementById(CURRENT_PROFILE_TAB + '-user-info');
     let parasContainer = personalInfoContainer.children;
@@ -268,7 +273,8 @@ async function loadPersonalInfo(userEmail = null){
         
         j++;
     }
-    putDotsBetweenElements("label-info-pair");    
+    putDotsBetweenElements("label-info-pair");
+    return true    
 }
 
 function clearChildren(parent){
@@ -296,6 +302,9 @@ async function loadMessages(email = null){
         }
     } catch(err){
         console.error("Working as intended?: " + err)
+        let modalTitle = 'Could not load messages! Errorcode: ' + err['status']
+        let modalBody = [err['message']]
+        showModal('profile-section', modalBody, modalTitle)
         return
     }
 
@@ -353,10 +362,12 @@ async function sendMessage(formElement, event, toEmail){
 }
 
 function searchAndDisplayUser(event){
-    let userEmail = document.getElementById('search-user-email').value;
-    loadPersonalInfo(userEmail);
-    loadMessages(userEmail);
     event.preventDefault();
+    let userEmail = document.getElementById('search-user-email').value;
+    
+    if ( loadPersonalInfo(userEmail) === true ){
+        loadMessages(userEmail)
+    }
 }
 
 function toTab(toTabName){
@@ -575,7 +586,7 @@ let displayLoggedin = async function() {
 }
 
 // använder inte promises ännu, fixa?
-function validateSignIn(event){
+async function validateSignIn(event){
     event.preventDefault();
     let emailInput      = document.getElementById("email");
     let passwordInput   = document.getElementById("password");
@@ -603,7 +614,7 @@ function validateSignIn(event){
             if (request.status == 200){
                 let token = JSON.parse(request.responseText);
                 setToken(token['token']);
-                displayView();
+                displayViewFromSignIn();
             }else {
                 let modalTitle = 'Sign in status: fail';
                 let modalBody = [request.responseText];
@@ -705,13 +716,42 @@ function validateSignUp(formElement, event){
     return false;
 }
 
-async function displayView(){
+async function displayViewFromSignIn(){
+    let userData = {}
+    let loggedIn = false
+
+    try{
+        userData = await getActiveUser()
+        loggedIn = userData.success
+    } catch(err){
+        console.table(err)
+        loggedIn = false
+        userData = err
+    }
+   
+    if (loggedIn){
+        delete userData['success']
+        saveUser(userData);
+        initiateWebSocket();
+        displayLoggedin();
+    } else{
+        displayNotLoggedin();
+        let modalTitle = 'Error: ' + userData['status']
+        let modalBody = [userData['message']]
+        showModal('welcome-section', modalBody, modalTitle)
+    }
+    console.table(socket)
+}
+
+async function displayViewFromStartUp(){
+    
     let userData = {}
     let loggedIn = false
     try{
         userData = await getActiveUser()
         loggedIn = userData.success
     } catch(err){
+        console.table(err)
         loggedIn = false
     }
         
@@ -730,7 +770,8 @@ async function displayView(){
 
 window.onload = async function(){
     console.log("page has been loaded");
-    displayView();
+    displayViewFromStartUp();
+    // displayView();
     // checkSignUpStatus();
 
 }

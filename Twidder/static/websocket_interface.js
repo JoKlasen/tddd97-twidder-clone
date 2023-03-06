@@ -3,7 +3,6 @@ let socket;
 
 
 function initiateWebSocket(){
-    setTimeout(1000)
     socket = new WebSocket("ws://localhost:5000/connect")
 
     socket.onopen = () => {
