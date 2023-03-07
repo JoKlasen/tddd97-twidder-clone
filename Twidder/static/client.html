@@ -154,7 +154,7 @@
                         </div>
 
                         <form action="" onsubmit="sendMessageFromHome(this, event)" id="home-send-messages" class="send-messages flex-row-container">
-                            <textarea id="home-send-message-text" class="send-message-text"></textarea>
+                            <textarea id="home-send-message-text" class="send-message-text" maxlegnth="400" required></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="home-send-message-button" class="button-style flex-fill" value="Send" type="submit">    
                                 <button id="home-refresh-messages" class="bold-font-large button-style" onclick="loadMessages()" type="button"> &#8635; </button> <!-- att ge knappen type="button" förhindrar den att submitta formen -->
@@ -213,7 +213,7 @@
                         </div>
 
                         <form action="" onsubmit="sendMessageFromBrowse(this, event)" id="browse-send-messages" class="send-messages flex-row-container">
-                            <textarea id="browse-send-message-text" class="send-message-text"></textarea>
+                            <textarea id="browse-send-message-text" class="send-message-text" maxlegnth="400" required></textarea>
                             <div class="flex-column-container flex-fill">
                                 <input id="browse-send-message-button" class="button-style flex-fill" value="Send" type="submit">     
                                 <button id="browse-refresh-messages" class="bold-font-large button-style" onclick="loadMessagesFromBrowse()" type="button"> &#8635; </button>

@@ -158,7 +158,10 @@ function postMessageReadyState(request, resolve, reject){
     if (request.status == 201){
         resolve("message posted")
     } else {
-        reject("message not posted") // Hämta ut body från response för att få relevant felmeddelande
+        let err = {}
+        err['status'] = request.status
+        err['message'] = request.responseText
+        reject(err)
     }   
 }
 
@@ -188,7 +191,10 @@ function signOutFromServerReadyState(request, resolve, reject){
     if (request.status === 200){
         resolve('Logged out')
     } else {
-        reject('Log out didn\'t work!')
+        let err = {}
+        err['message'] = request.responseText 
+        err['status'] = request.status 
+        reject(err)
     }
 }
 
@@ -213,7 +219,10 @@ function changePasswordReadyState(request, resolve, reject){
     if (request.status == 200){
         resolve("password change success")
     } else {
-        reject("password change fail")
+        let err = {}
+        err['message'] = request.responseText
+        err['status'] = request.status
+        reject(err)
     }
 } 
 
@@ -324,7 +333,7 @@ async function loadMessages(email = null){
         currentMessageBox.classList.remove("hide");
         messageContainer.appendChild(currentMessageBox);
 
-    }
+    }   
 }
 
 async function sendMessageFromBrowse(formElement, event){
@@ -342,6 +351,7 @@ async function sendMessage(formElement, event, toEmail){
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
 
+    
     if (toEmail == null && CURRENT_PROFILE_TAB == 'browse'){
         let modalBody = ['You have not chosen any user to browse yet.'];
         let modalTitle = 'Error: couldn\'t send message';
@@ -352,8 +362,9 @@ async function sendMessage(formElement, event, toEmail){
     try{
         let response = await postMessage(token, contentBox.value, toEmail);
     } catch(err){
-        console.log("sendMessage error:")
-        console.log(err)
+        let modalTitle = "Could not send message! Errorcode: " + err['status']
+        let modalBody = [err['message']]
+        showModal('profile-section', modalBody, modalTitle)
         return false
     }
 
@@ -365,16 +376,6 @@ async function searchAndDisplayUser(event){
     event.preventDefault();
     let userEmail = document.getElementById('search-user-email').value;
 
-    // loadPersonalInfo returnerar ett promise (som har ett boolean värde i
-    // sig), detta måste "packas upp" med await, dessutom körs nu
-    // loadPersonalInfo -> if-sats -> nästa, i sekvens pga await.
-
-    // Detta orsakade vår bugg eftersom det stod i princip:
-    // if ( promise_object ) { ... } 
-    // Som tydligen defaulta till att vara värde false..
-
-    // Detta borde också göra att vi kan bryta ut kod och göra wrapper
-    // funktioner som vi tänkte först, men det är väl egentligen inte så viktigt
     if ( await loadPersonalInfo(userEmail) ){
         loadMessages(userEmail)
     }
@@ -399,8 +400,8 @@ async function signOutHard(event){
     try{
         let response = await signOutFromServer(getToken()) 
     } catch(err){
-        let modalBody = [err];
-        let modalTitle = 'Sign out status'; 
+        let modalBody = [err['message']];
+        let modalTitle = 'Error: ' + err['status']; 
         showModal('profile-section', modalBody, modalTitle);
         return
     }
@@ -449,10 +450,6 @@ async function validatePasswordChange(event){
 
     let modalBody = [];
     let modalTitle = '';
-    console.log("newPassword")
-    console.log(newPasswordElement.value)
-    console.log("newPasswordAgain")
-    console.log(newPasswordAgainElement.value)
     if (newPasswordElement.value !== newPasswordAgainElement.value){
         modalTitle = 'Error changing password';
         modalBody = ['New passwords doesn\'t match!'];
@@ -462,16 +459,15 @@ async function validatePasswordChange(event){
 
     try{
         let response = await changePassword(getToken(), oldPasswordElement.value, newPasswordElement.value)
-        modalTitle += 'success';
+        modalTitle = 'Password change success!';
         modalBody = [response];
     } catch(err){
         console.log("password change error: ")
         console.log(err)
-        modalTitle += 'fail';
-        modalBody = [err];
+        modalTitle = 'Password change failed! Errorcode: ' + err['status'];
+        modalBody = [err['message']];
     }
 
-    modalTitle = 'Password change status: ';    
     showModal('profile-section', modalBody, modalTitle);
     
     oldPasswordElement.value = '';
@@ -686,7 +682,6 @@ function validateSignUp(formElement, event){
                         country: document.getElementById("country").value,
                     }
     
-    // Await här?
     let request = initiateXHR("POST", "/sign_up");
     request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     request.send(JSON.stringify(formData));
@@ -698,19 +693,10 @@ function validateSignUp(formElement, event){
             if (request.status == 201){
                 modalBody = ['Successfully created new user.'];
                 modalTitle = 'Sign up OK';
-                
                 formElement.reset();
-
-                document.getElementById("email-new").value = '';
-                document.getElementById("password-new").value = '';
-                document.getElementById("first-name").value = '';
-                document.getElementById("last-name").value = '';
-                document.getElementById("gender-input").value = '';
-                document.getElementById("city").value = '';
-                document.getElementById("country").value = '';
             } else {
                 modalBody = [request.responseText];
-                modalTitle = 'Sign up failed';
+                modalTitle = 'Sign up failed! Errorcode: ' + request.status;
 
             }
             
