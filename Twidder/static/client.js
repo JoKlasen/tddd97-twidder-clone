@@ -361,11 +361,21 @@ async function sendMessage(formElement, event, toEmail){
     loadMessages(toEmail);
 }
 
-function searchAndDisplayUser(event){
+async function searchAndDisplayUser(event){
     event.preventDefault();
     let userEmail = document.getElementById('search-user-email').value;
-    
-    if ( loadPersonalInfo(userEmail) === true ){
+
+    // loadPersonalInfo returnerar ett promise (som har ett boolean värde i
+    // sig), detta måste "packas upp" med await, dessutom körs nu
+    // loadPersonalInfo -> if-sats -> nästa, i sekvens pga await.
+
+    // Detta orsakade vår bugg eftersom det stod i princip:
+    // if ( promise_object ) { ... } 
+    // Som tydligen defaulta till att vara värde false..
+
+    // Detta borde också göra att vi kan bryta ut kod och göra wrapper
+    // funktioner som vi tänkte först, men det är väl egentligen inte så viktigt
+    if ( await loadPersonalInfo(userEmail) ){
         loadMessages(userEmail)
     }
 }

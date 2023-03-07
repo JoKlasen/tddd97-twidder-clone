@@ -1,7 +1,5 @@
 let socket;
 
-
-
 function initiateWebSocket(){
     socket = new WebSocket("ws://localhost:5000/connect")
 
