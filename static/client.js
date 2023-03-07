@@ -765,7 +765,7 @@ async function displayViewFromStartUp(){
 // ---------------- /Welcome functions ----------------
 
 window.onload = async function(){
-    console.log("page has been loaded");
+    console.log("page has been loaded, ny commit");
     displayViewFromStartUp();
     // displayView();
     // checkSignUpStatus();
