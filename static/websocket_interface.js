@@ -1,7 +1,8 @@
 let socket;
+let url = "pintotwidder.azurewebsites.net"
 
 function initiateWebSocket(){
-    socket = new WebSocket("ws://localhost:5000/connect")
+    socket = new WebSocket("ws://" + url + "/connect")
 
     socket.onopen = () => {
         socket.send( getToken() )

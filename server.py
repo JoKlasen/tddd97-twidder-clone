@@ -72,11 +72,13 @@ def teardown(exception):
 
 @app.route("/", methods = ['GET'])
 def send_page():
+    print("skickar hemsida")
     return app.send_static_file("client.html"), 200
 
 
 @app.route("/sign_up", methods = ['POST'])
 def sign_up():
+    print("i sign_up")
     data = request.get_json()
 
     if not hf.is_valid_sign_up(data):
@@ -119,6 +121,7 @@ def sign_in():
 
 @app.route("/sign_out", methods = ['DELETE'])
 def sign_out():
+    print("i sign_out")
     token = request.headers.get('Authorization')
     user = db.validate_token_and_get_user(token)
 
