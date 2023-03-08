@@ -1,49 +1,3 @@
-// console.table                   <-- skriv ut arrayer och object
-// console.dir                     <-- skriv ut html element objektet
-// console.time / console.timeEnd
-// console.error                   <-- ?
-
-
-// Testa hur async/await/promise funkar
-// async function testAsync(){
-//     return new Promise(function(resolve, reject){
-//         let a = 1 + 1
-//         if (a === 3){
-//             resolve("User data!")
-//         } else {
-//             reject("fail :(")
-//         }
-//     })
-// }
-
-// async function wrapper(){
-//     try{
-//         let e = await testAsync();
-//         console.log(e)    
-//     } catch(err){
-//         console.log(err)
-//     }
-// }
-
-
-
-// "arrow function", "(param1,param2)", "=>" inget särskilt, "{kod i funktionen}""
-// request.onreadystatechange = () => {
-//     getMessagesReadyState(request, resolve, reject);
-// }
-
-// Detta är strikt taget inte samma sak. Skillnad ligger i "this" <-- Läs på?
-// request.onreadystatechange = function() {
-//     getMessagesReadyState(request, resolve, reject);
-// }
-
-// Det nedan fungerar inte eftersom det är ett anrop till "getMessagesReadyState",
-// varför det måste wrappas i en funktiondeklaration.^ 
-//
-// request.onreadystatechange = getMessagesReadyState(request, resolve, reject);
-//
-
-
 // ---------------- SERVER INTERFACE ---------------- 
 
 function initiateXHR(method, url) {
@@ -117,8 +71,7 @@ async function getUserMessagesByEmail(token, email){
 async function getUserMessagesByToken(token){
     return new Promise(function(resolve, reject){
         let request = initiateXHR("GET", '/get_user_messages_by_token')
-        console.log("i get messages by token: ")
-        console.log(token)        
+      
         request.setRequestHeader('Authorization', token)
         request.send()
 
@@ -153,18 +106,6 @@ async function getUserDataByEmail(email, token){
 }
 
 function postMessageReadyState(request, resolve, reject){
-    
-    if (request.readyState == 1){
-        console.table("1")
-        console.table(request)
-    } else if (request.readyState == 2){
-        console.table("2")
-        console.table(request)
-    }else if (request.readyState == 3){
-        console.table("3")
-        console.table(request)
-    }
-
     if (request.readyState !== 4){
         return
     }
@@ -746,7 +687,6 @@ async function displayViewFromSignIn(){
         let modalBody = [userData['message']]
         showModal('welcome-section', modalBody, modalTitle)
     }
-    console.table(socket)
 }
 
 async function displayViewFromStartUp(){
@@ -769,12 +709,11 @@ async function displayViewFromStartUp(){
     } else{
         displayNotLoggedin();
     }
-    console.table(socket)
 }
 
 // ---------------- /Welcome functions ----------------
 
 window.onload = async function(){
-    console.log("page has been loaded, ny commit");
+    console.log("page has been loaded");
     displayViewFromStartUp();
 }
