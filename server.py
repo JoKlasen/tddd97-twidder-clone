@@ -221,7 +221,10 @@ def get_user_messages_by_token():
         return jsonify('Invalid email'), 404
 
     result = db.get_messages(user)
-    return result
+    if not result[1]:
+        return jsonify('Internal server error'), 500
+    
+    return jsonify(result[0]), 200
 
 
 @app.route("/get_user_messages_by_email/<email>", methods = ['GET'])

@@ -117,6 +117,8 @@ async function getUserMessagesByEmail(token, email){
 async function getUserMessagesByToken(token){
     return new Promise(function(resolve, reject){
         let request = initiateXHR("GET", '/get_user_messages_by_token')
+        console.log("i get messages by token: ")
+        console.log(token)        
         request.setRequestHeader('Authorization', token)
         request.send()
 
@@ -151,6 +153,18 @@ async function getUserDataByEmail(email, token){
 }
 
 function postMessageReadyState(request, resolve, reject){
+    
+    if (request.readyState == 1){
+        console.table("1")
+        console.table(request)
+    } else if (request.readyState == 2){
+        console.table("2")
+        console.table(request)
+    }else if (request.readyState == 3){
+        console.table("3")
+        console.table(request)
+    }
+
     if (request.readyState !== 4){
         return
     }
@@ -310,7 +324,8 @@ async function loadMessages(email = null){
             userMessages = await getUserMessagesByEmail(token, email);
         }
     } catch(err){
-        console.error("Working as intended?: " + err)
+        console.error("Working as intended?: ")
+        console.error(err)
         let modalTitle = 'Could not load messages! Errorcode: ' + err['status']
         let modalBody = [err['message']]
         showModal('profile-section', modalBody, modalTitle)
@@ -591,7 +606,6 @@ let displayLoggedin = async function() {
     loadMessages();
 }
 
-// använder inte promises ännu, fixa?
 async function validateSignIn(event){
     event.preventDefault();
     let emailInput      = document.getElementById("email");
@@ -626,15 +640,11 @@ async function validateSignIn(event){
                 let modalBody = [request.responseText];
                 showModal('welcome-section', modalBody, modalTitle);        
                 event.preventDefault();
-                return false;
+                return;
 
             }
         }
     }
-    
-    // let response = serverstub.signIn(emailInput.value, passwordInput.value); 
-    
-    // No refresh of the webpage. Profile view loaded manually.
 }
 
 function validateSignUp(formElement, event){
@@ -767,7 +777,4 @@ async function displayViewFromStartUp(){
 window.onload = async function(){
     console.log("page has been loaded, ny commit");
     displayViewFromStartUp();
-    // displayView();
-    // checkSignUpStatus();
-
 }

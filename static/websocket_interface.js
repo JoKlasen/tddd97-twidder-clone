@@ -1,5 +1,5 @@
 let socket;
-let url = "pintotwidder.azurewebsites.net"
+let url = "pintotwidderapp.azurewebsites.net"
 
 function initiateWebSocket(){
     socket = new WebSocket("ws://" + url + "/connect")
