@@ -28,9 +28,8 @@ def disconnect_socket(user):
     try:
         logout_sock.send("logout")
         logout_sock.close()
-        del active_sockets[user]
     except Exception as e:
-        print("exception i disconnect socket:")
+        print("Exception i disconnect socket:")
         print(e)
 
 
@@ -44,22 +43,23 @@ def echo_socket(ws):
 
 @socket.route("/connect")
 def connect(ws):
+    user = ''
     while True:
         try:
             token = ws.receive()
             user = db.validate_token_and_get_user(token)
             
+            ## If message is not a vaild token, dont add a new connection
             if user is None:
-                print("email in connect:")
-                print(user)
                 continue
 
             active_sockets[user] = ws
-            print("(i connect) active sockets!")
+            print("(New connection! All current connections:")
             print(active_sockets)
         except Exception as e:
             print("Exception i connect")
             print(e)
+            del active_sockets[user]
             break
 
 # -------------------- /WebSocket --------------------
@@ -72,13 +72,11 @@ def teardown(exception):
 
 @app.route("/", methods = ['GET'])
 def send_page():
-    print("skickar hemsida")
     return app.send_static_file("client.html"), 200
 
 
 @app.route("/sign_up", methods = ['POST'])
 def sign_up():
-    print("i sign_up")
     data = request.get_json()
 
     if not hf.is_valid_sign_up(data):
@@ -96,8 +94,7 @@ def sign_up():
 @app.route("/sign_in", methods = ['POST'])
 def sign_in():
     data = request.get_json()
-    print("i sign in, sockets:")
-    print(active_sockets)
+
     if data is None:
         return jsonify('No body data sent'), 400
 
@@ -121,7 +118,6 @@ def sign_in():
 
 @app.route("/sign_out", methods = ['DELETE'])
 def sign_out():
-    print("i sign_out")
     token = request.headers.get('Authorization')
     user = db.validate_token_and_get_user(token)
 

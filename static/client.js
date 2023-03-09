@@ -213,33 +213,49 @@ function sendUserLocationReadyState(request, resolve, reject){
         return
     }
 
-    if (request.status == 200){
-        resolve("Location updated successfully")
-    } else {
+    if (request.status !== 200) {
         let err = {}
         err['message'] = request.responseText
         err['status'] = request.status
-        reject(err)
+        console.log(err)
     }
 } 
 
+// async function sendUserLocation(token, location){
+//     return new Promise( (resolve, reject)=>{
+//         request = initiateXHR('PUT', '/update_location');
+//         request.setRequestHeader('Authorization', token)
+//         request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+//         let body = {
+//             'location' : location
+//         }
+
+//         request.send(JSON.stringify(body))
+
+//         request.onreadystatechange = () => {
+//             sendUserLocationReadyState(request, resolve, reject)
+//         }
+//     })
+// }
+
 async function sendUserLocation(token, location){
-    return new Promise( (resolve, reject)=>{
-        request = initiateXHR('PUT', '/update_location');
-        request.setRequestHeader('Authorization', token)
-        request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
 
-        let body = {
-            'location' : location
-        }
+    request = initiateXHR('PUT', '/update_location');
+    request.setRequestHeader('Authorization', token)
+    request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
 
-        request.send(JSON.stringify(body))
+    let body = {
+        'location' : location
+    }
 
-        request.onreadystatechange = () => {
-            sendUserLocationReadyState(request, resolve, reject)
-        }
-    })
+    request.send(JSON.stringify(body))
+
+    request.onreadystatechange = () => {
+        sendUserLocationReadyState(request)
+    }
 }
+
 // ---------------- /SERVER INTERFACE ---------------- 
 
 
@@ -266,6 +282,7 @@ async function loadPersonalInfo(userEmail = null){
 
     let personalInfoContainer = document.getElementById(CURRENT_PROFILE_TAB + '-user-info');
     let parasContainer = personalInfoContainer.children;
+    console.table(parasContainer)
 
     let i = 0;
     let j = 0;
@@ -342,7 +359,7 @@ async function sendMessageFromHome(formElement, event){
     sendMessage(formElement, event, toEmail)
 }
 
-function lookupPosition(position){
+async function lookupPosition(position){
     console.log("Position retrieved:");
     console.table(position);
     
@@ -365,20 +382,21 @@ function lookupPosition(position){
 
             if (request.status == 200){
                 body = JSON.parse( request.responseText );
-                location = body.features[0].place_name;
+                location = body.features[0].context[0].text;
                 
                 console.table(body);
                 console.log(location);
-
-                //resolve(body)
                 
             }else{
                 body['message'] = request.responseText;
                 body['status']  = request.status;
                 location = "None";
-                //reject(body)
             }
-            
+            let active_user = JSON.parse( window.localStorage.getItem('active_user') )
+            active_user['location'] = location
+            window.localStorage.setItem('active_user', active_user)
+            document.getElementById('geolocation-info').innerHTML = location;
+            putDotsBetweenElements("geolocation-info-wrapper");
             sendUserLocation(token, location)
         }
     }
@@ -396,17 +414,6 @@ async function sendMessage(formElement, event, toEmail){
         let modalTitle = 'Error: couldn\'t send message';
         showModal('profile-section', modalBody, modalTitle);
         return;
-    }
-
-    let position = "";
-    let location = "";
-    if (navigator.geolocation){
-        position = navigator.geolocation.getCurrentPosition(lookupPosition);
-
-    }
-    else{
-        console.log("No position");
-        location = "None" 
     }
 
     try{
@@ -578,19 +585,38 @@ function deleteUser(user){
 
 
 function putDotsBetweenElements(elementName){
-    let wrapperDivs = document.getElementsByClassName(elementName);
-    
-    for (let i = 0; i < wrapperDivs.length; i++){
-        let children = wrapperDivs[i].children;
+    let wrapperDivs = {}
+    // dont read this code
+    if (elementName === "geolocation-info-wrapper"){
+        console.log("här är vi!")
+        wrapperDivs = document.getElementById(elementName);
+
+        let children = wrapperDivs.children;
         let labelField = children[0];
         let inputField = children[1];
+        
+        labelField.innerHTML = 'location'
 
-        let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
+        let pixelsBetween = wrapperDivs.offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
         let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
         let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
 
         labelField.innerHTML += '.'.repeat(dotsBetween);
+    }else {
+        wrapperDivs = document.getElementsByClassName(elementName);
+        for (let i = 0; i < wrapperDivs.length; i++){
+            let children = wrapperDivs[i].children;
+            let labelField = children[0];
+            let inputField = children[1];
+    
+            let pixelsBetween = wrapperDivs[i].offsetWidth - (labelField.offsetWidth + inputField.offsetWidth); 
+            let pixelsPerChar = labelField.offsetWidth / labelField.innerHTML.length;
+            let dotsBetween = Math.floor(pixelsBetween / pixelsPerChar);
+    
+            labelField.innerHTML += '.'.repeat(dotsBetween);
+        }
     }
+
 }
 
 function hideOtherViews(viewNames){
@@ -775,11 +801,24 @@ async function displayViewFromSignIn(){
         saveUser(userData);
         initiateWebSocket();
         displayLoggedin();
+        displayGeolocation();
     } else{
         displayNotLoggedin();
         let modalTitle = 'Error: ' + userData['status']
         let modalBody = [userData['message']]
         showModal('welcome-section', modalBody, modalTitle)
+    }
+}
+
+async function displayGeolocation(){
+    
+    let location = "";
+    if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(lookupPosition);
+    }
+    else{
+        console.log("No position");
+        location = "None" 
     }
 }
 
@@ -799,6 +838,7 @@ async function displayViewFromStartUp(){
         delete userData['success']
         saveUser(userData);
         initiateWebSocket();
+        displayGeolocation(); 
         displayLoggedin();
     } else{
         displayNotLoggedin();

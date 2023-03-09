@@ -36,7 +36,6 @@ def is_valid_sign_up(body):
         'country' not in body:
         return False
     
-    print(body)
     if not is_valid_email(body['email']):
         return False
 
