@@ -5,7 +5,8 @@ CREATE TABLE users (
     surName TEXT,
     gender TEXT,
     city TEXT,
-    country TEXT
+    country TEXT,
+    location TEXT DEFAULT 'None'
 );
 
 CREATE TABLE messages (
@@ -25,10 +26,10 @@ CREATE TABLE loggedInUsers (
 );
 
 INSERT INTO users VALUES
-('test@test.test', 'test' , 'test', 'test', 'Male', 'test', 'test'),
-('johan@me.se', 'pass123', 'Johan', 'Klasén', 'Male', 'Linköping', 'Sweden'),
-('wilvo@me.se', 'asd123', 'Wilhelm', 'von Kantzow', 'Male', 'Linköping', 'Sweden'),
-('bo@bob.com', 'volvo240', 'Bo', 'Bosson', 'Other', 'Byboda', 'Svärje');
+('test@test.test', 'test' , 'test', 'test', 'Male', 'test', 'test', 'None'),
+('johan@me.se', 'pass123', 'Johan', 'Klasén', 'Male', 'Linköping', 'Sweden', 'None'),
+('wilvo@me.se', 'asd123', 'Wilhelm', 'von Kantzow', 'Male', 'Linköping', 'Sweden', 'None'),
+('bo@bob.com', 'volvo240', 'Bo', 'Bosson', 'Other', 'Byboda', 'Svärje', 'None');
 
 
 INSERT INTO messages VALUES

@@ -40,6 +40,18 @@ def execute_and_commit(query, columns):
 
 
 # _________Database/Server Interface_________
+def update_user_location(user, data):
+    location = data['location']
+
+    try:
+        execute_and_commit("UPDATE users SET location = ? WHERE email = ?", [location, user])
+    except Exception as e:
+        hf.print_except(e)
+        return False
+
+    return True
+    
+
 def post_message(data, fromEmail):
     toEmail = data['email']
     message = data['message']
@@ -90,6 +102,7 @@ def get_user_data(email):
                         'gender' : match[4],
                         'city' : match[5],
                         'country' : match[6],
+                        'location' : match[7],
                         'success' : True
                     }
 
@@ -102,9 +115,9 @@ def get_user_data(email):
 
 def add_user(data):
     try:
-        execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
+        execute_and_commit("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?);",  [data['email'], data['password'], data['firstname'], 
                                                                                 data['familyname'], data['gender'], data['city'],    
-                                                                                data['country'] ])
+                                                                                data['country'], "None" ])
     except Exception as e:
         hf.print_except(e)
         return False

@@ -186,6 +186,10 @@ def get_user_data_by_token():
         return jsonify('Internal server error'), 500 
 
     del result['success']
+    ## Only send users location if they are currently connected
+    if not user in active_sockets:
+        result['location'] = "None"
+
     return jsonify(result), 200
 
 
@@ -206,6 +210,10 @@ def get_user_data_by_email(email):
         return jsonify('Internal server error'), 500 
 
     del result['success']
+    ## Only send users location if they are currently connected
+    if not email in active_sockets:
+        result['location'] = "None"
+
     return jsonify(result), 200
 
 
@@ -271,7 +279,24 @@ def post_message():
         return jsonify('Internal server error'), 500
 
     return jsonify(''), 201
+
+@app.route('/update_location', methods = ['PUT'])
+def update_location():
+    token = request.headers.get('Authorization')
+    data = request.get_json()
+    user = db.validate_token_and_get_user(token)
+
+    if data is None:
+        return jsonify('No body data sent'), 400
+
+    if user is None:
+        return jsonify('Invalid token'), 401
     
+    if not db.update_user_location(user, data):
+        return jsonify('Internal server error'), 500
+    
+    return jsonify(''), 200
+
 
 if __name__ == '__main__':
     app.debug = True

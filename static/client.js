@@ -208,6 +208,38 @@ async function changePassword(token, oldPassword, newPassword){
     })
 }
 
+function sendUserLocationReadyState(request, resolve, reject){
+    if (request.readyState !== 4){
+        return
+    }
+
+    if (request.status == 200){
+        resolve("Location updated successfully")
+    } else {
+        let err = {}
+        err['message'] = request.responseText
+        err['status'] = request.status
+        reject(err)
+    }
+} 
+
+async function sendUserLocation(token, location){
+    return new Promise( (resolve, reject)=>{
+        request = initiateXHR('PUT', '/update_location');
+        request.setRequestHeader('Authorization', token)
+        request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+        let body = {
+            'location' : location
+        }
+
+        request.send(JSON.stringify(body))
+
+        request.onreadystatechange = () => {
+            sendUserLocationReadyState(request, resolve, reject)
+        }
+    })
+}
 // ---------------- /SERVER INTERFACE ---------------- 
 
 
@@ -313,8 +345,8 @@ async function sendMessageFromHome(formElement, event){
 function lookupPosition(position){
     console.log("Position retrieved:");
     console.table(position);
+    
     // Lookup coords
-
     let lat     = position.coords.latitude;
     let long    = position.coords.longitude;
     let url     = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + long + ',' + lat + '.json?types=place&access_token=' + mapboxToken;
@@ -323,22 +355,31 @@ function lookupPosition(position){
     console.log(url);
 
     let request = initiateXHR('GET', url);
-    request.send()
+    request.send();
 
     request.onreadystatechange =  function(){
         if (request.readyState == 4){
-            let body = {}
-            if (request.status == 200){
-                body = JSON.parse( request.responseText )
-                console.table(body);
-                console.log(body.features[0].place_name)
-                //resolve(body)
+            let body = {};
+            let location = "";
+            let token = getToken();
 
+            if (request.status == 200){
+                body = JSON.parse( request.responseText );
+                location = body.features[0].place_name;
+                
+                console.table(body);
+                console.log(location);
+
+                //resolve(body)
+                
             }else{
-                body['message'] = request.responseText
-                body['status']  = request.status
+                body['message'] = request.responseText;
+                body['status']  = request.status;
+                location = "None";
                 //reject(body)
             }
+            
+            sendUserLocation(token, location)
         }
     }
 }
