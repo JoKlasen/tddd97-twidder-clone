@@ -1,3 +1,11 @@
+let mapboxToken = "pk.eyJ1Ijoiam9oa2w0NzMiLCJhIjoiY2xmMDN2NzNuMDVnbjN4dDU3cHhldmlzaCJ9.HIgTA6mC5xK3kUhkNpJi0A"
+
+// Mindre TODO: 
+// * Städa debugprints i backend
+// * Putta in websocket_interface.js i client.js
+// * Hantera hämtad plats
+
+
 // ---------------- SERVER INTERFACE ---------------- 
 
 function initiateXHR(method, url) {
@@ -302,8 +310,42 @@ async function sendMessageFromHome(formElement, event){
     sendMessage(formElement, event, toEmail)
 }
 
+function lookupPosition(position){
+    console.log("Position retrieved:");
+    console.table(position);
+    // Lookup coords
+
+    let lat     = position.coords.latitude;
+    let long    = position.coords.longitude;
+    let url     = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + long + ',' + lat + '.json?types=place&access_token=' + mapboxToken;
+
+    console.log("Mapbox URL:")
+    console.log(url);
+
+    let request = initiateXHR('GET', url);
+    request.send()
+
+    request.onreadystatechange =  function(){
+        if (request.readyState == 4){
+            let body = {}
+            if (request.status == 200){
+                body = JSON.parse( request.responseText )
+                console.table(body);
+                console.log(body.features[0].place_name)
+                //resolve(body)
+
+            }else{
+                body['message'] = request.responseText
+                body['status']  = request.status
+                //reject(body)
+            }
+        }
+    }
+}
+
+
 async function sendMessage(formElement, event, toEmail){    
-    event.preventDefault() // viktigt med "prevenDefault" innan allting för firefox för annars funkar inte att skicka request
+    event.preventDefault() // viktigt med "preventDefault" innan allting för firefox för annars funkar inte att skicka request
     let token = getToken();
     let contentBox = formElement[CURRENT_PROFILE_TAB + "-send-message-text"];
 
@@ -313,6 +355,17 @@ async function sendMessage(formElement, event, toEmail){
         let modalTitle = 'Error: couldn\'t send message';
         showModal('profile-section', modalBody, modalTitle);
         return;
+    }
+
+    let position = "";
+    let location = "";
+    if (navigator.geolocation){
+        position = navigator.geolocation.getCurrentPosition(lookupPosition);
+
+    }
+    else{
+        console.log("No position");
+        location = "None" 
     }
 
     try{
