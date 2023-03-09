@@ -383,8 +383,6 @@ async function lookupPosition(position){
             if (request.status == 200){
                 body = JSON.parse( request.responseText );
                 location = body.features[0].context[0].text;
-                
-                console.table(body);
                 console.log(location);
                 
             }else{
